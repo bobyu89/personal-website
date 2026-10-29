@@ -1,0 +1,24 @@
+---
+import type { ModeId } from "../data/profile";
+
+interface Props {
+  id: ModeId | "contact";
+  field: ModeId | "paper" | "ink";
+  title: string;
+  titleEn?: string;
+  statement: string;
+  class?: string;
+}
+
+const { id, field, title, titleEn, statement, class: className } = Astro.props;
+---
+
+<section class:list={["chapter", className]} id={id} data-field={field} data-chapter aria-labelledby={`${id}-title`}>
+  <div class="wrap grid chapter__head" data-reveal>
+    <h2 class="chapter__title reveal" id={`${id}-title`}>
+      {title}{titleEn && <span class="visually-hidden" lang="en"> {titleEn}</span>}
+    </h2>
+    <p class="statement reveal" style="--i: 2">{statement}</p>
+  </div>
+  <slot />
+</section>

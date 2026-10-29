@@ -1,0 +1,62 @@
+---
+import type { Item } from "../data/profile";
+
+interface Props {
+  title: string;
+  items: Item[];
+  layout?: "stack" | "rows";
+  class?: string;
+}
+
+const { title, items, layout = "stack", class: className } = Astro.props;
+const headingId = `list-${title}`;
+---
+
+<div class:list={["entries-block", `entries-block--${layout}`, className]}>
+  <h3 class="list-title" id={headingId}>{title}</h3>
+  <ul class="entries" aria-labelledby={headingId}>
+    {
+      items.map((item) => (
+        <li class="entry">
+          <p class="entry__title">{item.href ? <a href={item.href}>{item.title}</a> : item.title}</p>
+          {item.text && <p class="entry__text">{item.text}</p>}
+          {item.meta && (
+            <p class="entry__meta" lang={/^[\x00-\x7F·]+$/.test(item.meta) ? "en" : undefined}>
+              {item.meta}
+            </p>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .entries-block {
+    display: grid;
+    gap: clamp(20px, 2.4vw, 32px);
+    align-content: start;
+  }
+
+  .entry__title {
+    font-size: calc(var(--size-body) * 1.18);
+  }
+
+  .entries-block--rows .entries {
+    gap: clamp(28px, 3vw, 44px);
+  }
+
+  @media (min-width: 900px) {
+    .entries-block--rows .entry {
+      display: grid;
+      grid-template-columns: 4fr 5fr 3fr;
+      column-gap: var(--gap);
+      align-items: baseline;
+    }
+
+    .entries-block--rows .entry__title {
+      font-size: clamp(22px, 1rem + 0.8vw, 30px);
+      line-height: 1.3;
+    }
+  }
+</style>

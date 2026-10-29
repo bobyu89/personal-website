@@ -1,0 +1,30 @@
+---
+import { Picture } from "astro:assets";
+import type { Archive } from "../data/profile";
+
+interface Props {
+  image: Archive;
+  sizes: string;
+  ratio?: string;
+  class?: string;
+  loading?: "lazy" | "eager";
+}
+
+const { image, sizes, ratio, class: className, loading = "lazy" } = Astro.props;
+const widths = [480, 800, 1200, 1600, image.src.width].filter((w, i, all) => w <= image.src.width && all.indexOf(w) === i);
+---
+
+<figure class:list={["archive", className]}>
+  <div class="archive__frame" style={ratio ? `--ratio: ${ratio}` : undefined}>
+    <Picture
+      src={image.src}
+      alt={image.alt}
+      widths={widths}
+      sizes={sizes}
+      formats={["avif", "webp"]}
+      loading={loading}
+      style={`object-position: ${image.position ?? "50% 50%"}`}
+    />
+  </div>
+  <figcaption class="small">{image.caption}</figcaption>
+</figure>

@@ -1,0 +1,104 @@
+---
+import { contact, modes, site } from "../data/profile";
+import Arrow from "./Arrow.astro";
+
+const mailto = contact.email
+  ? `mailto:${contact.email}?subject=${encodeURIComponent(contact.subject)}`
+  : "#contact";
+---
+
+<nav class="nav wrap" data-field="ink" aria-label="主選單">
+  <a class="nav__mark" href="#top">{site.name}</a>
+  <ul class="nav__links">
+    {
+      modes.map((mode) => (
+        <li>
+          <a href={`#${mode.id}`}>{mode.zh}</a>
+        </li>
+      ))
+    }
+  </ul>
+  <a class="btn nav__action" href={mailto}>寄信合作<Arrow /></a>
+</nav>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: var(--gap);
+    height: var(--nav-h);
+    transition:
+      background-color 0.35s var(--ease-out),
+      color 0.35s var(--ease-out);
+  }
+
+  .nav__mark {
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    margin-right: auto;
+  }
+
+  .nav__links {
+    display: flex;
+    gap: clamp(20px, 2.4vw, 40px);
+    font-weight: 700;
+  }
+
+  .nav__links a {
+    text-decoration-color: transparent;
+  }
+
+  .nav__links a:hover,
+  .nav__links a[aria-current="true"] {
+    text-decoration-color: currentColor;
+  }
+
+  .nav__action {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  @media (max-width: 640px) {
+    .nav__links {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  // 導覽列採用它正下方那個區塊的顏色。
+  const nav = document.querySelector<HTMLElement>(".nav");
+  const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-chapter]"));
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>(".nav__links a"));
+
+  if (nav && sections.length) {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const line = nav.offsetHeight;
+      const current =
+        sections.find((s) => {
+          const r = s.getBoundingClientRect();
+          return r.top <= line && r.bottom > line;
+        }) ?? sections[0];
+      nav.dataset.field = current.dataset.field ?? "ink";
+      for (const link of links) {
+        const active = link.hash === `#${current.id}`;
+        if (active) link.setAttribute("aria-current", "true");
+        else link.removeAttribute("aria-current");
+      }
+    };
+    const queue = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    addEventListener("scroll", queue, { passive: true });
+    addEventListener("resize", queue);
+    document.addEventListener("fieldchange", queue);
+    update();
+  }
+</script>

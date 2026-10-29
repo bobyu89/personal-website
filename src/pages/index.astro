@@ -1,0 +1,378 @@
+---
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Hero from "../components/Hero.astro";
+import Chapter from "../components/Chapter.astro";
+import Archive from "../components/Archive.astro";
+import Entries from "../components/Entries.astro";
+import Arrow from "../components/Arrow.astro";
+import { archives, clinical, closing, contact, creative, research, sampleItems, site, tech } from "../data/profile";
+
+if (import.meta.env.PROD && sampleItems.length) {
+  console.warn(
+    `\n[profile] 還有 ${sampleItems.length} 個示意項目沒處理（src/data/profile.ts 裡的 sample: true）：\n  - ${sampleItems.join("\n  - ")}\n`,
+  );
+}
+
+const mailto = contact.email ? `mailto:${contact.email}?subject=${encodeURIComponent(contact.subject)}` : undefined;
+const links = contact.links.filter((link) => link.href);
+const scholarLinks = links.filter((link) => ["ORCID", "Google Scholar"].includes(link.label));
+const year = new Date().getFullYear();
+---
+
+<Base>
+  <Nav />
+  <Hero />
+
+  <main id="main">
+    <Chapter id="research" field="research" title="研究" titleEn="Research" statement={research.statement}>
+      <div class="wrap grid research" data-reveal>
+        <Archive
+          class="research__figure reveal"
+          image={research.image}
+          ratio="1 / 1"
+          sizes="(min-width: 900px) 48vw, 100vw"
+        />
+        <div class="research__text">
+          <p class="body reveal" style="--i: 1">{research.body}</p>
+          <Entries class="reveal" title={research.listTitle} items={research.items} />
+          <div class="research__pubs reveal" style="--i: 2">
+            {
+              research.publications.length ? (
+                <Entries title="著作" items={research.publications} />
+              ) : (
+                <>
+                  <h3 class="list-title">著作</h3>
+                  <p>
+                    著作清單整理中。
+                    {scholarLinks.length > 0 && (
+                      <>
+                        完整列表請見
+                        {scholarLinks.map((link, i) => (
+                          <>
+                            {i > 0 && "、"}
+                            <a href={link.href} rel="noopener">
+                              {link.label}
+                            </a>
+                          </>
+                        ))}
+                        。
+                      </>
+                    )}
+                  </p>
+                </>
+              )
+            }
+          </div>
+        </div>
+      </div>
+    </Chapter>
+
+    <Chapter id="clinical" field="clinical" title="臨床" titleEn="Clinical" statement={clinical.statement}>
+      <div class="wrap grid clinical" data-reveal>
+        <div class="clinical__text">
+          <p class="body reveal">{clinical.body}</p>
+          <Entries class="reveal" title={clinical.listTitle} items={clinical.items} />
+        </div>
+        <Archive
+          class="clinical__figure reveal"
+          image={clinical.image}
+          ratio="3 / 2"
+          sizes="(min-width: 900px) 56vw, 100vw"
+        />
+      </div>
+    </Chapter>
+
+    <Chapter id="tech" field="tech" title="技術" titleEn="Tech" statement={tech.statement}>
+      <div class="wrap grid tech" data-reveal>
+        <p class="body tech__body reveal">{tech.body}</p>
+        <Archive
+          class="tech__figure reveal"
+          image={tech.image}
+          ratio="16 / 7"
+          sizes="100vw"
+        />
+        <Entries class="tech__list reveal" title={tech.listTitle} items={tech.items} layout="rows" />
+      </div>
+    </Chapter>
+
+    <Chapter id="creative" field="creative" title="創作" titleEn="Creative" statement={creative.statement}>
+      <div class="wrap grid creative" data-reveal>
+        <Archive
+          class="creative__figure reveal"
+          image={creative.image}
+          sizes="(min-width: 900px) 64vw, 100vw"
+        />
+        <div class="creative__text">
+          <p class="body reveal" style="--i: 1">{creative.body}</p>
+          <Entries class="reveal" title={creative.listTitle} items={creative.items} />
+        </div>
+      </div>
+    </Chapter>
+
+    <Chapter id="contact" field="paper" title={closing.heading} statement={closing.statement} class="contact">
+      <div class="wrap grid contact__body" data-reveal>
+        <div class="contact__action reveal">
+          {
+            mailto ? (
+              <>
+                <a class="btn contact__btn" href={mailto}>
+                  寄信給我
+                  <Arrow />
+                </a>
+                <p class="contact__email">
+                  <a href={mailto}>{contact.email}</a>
+                </p>
+              </>
+            ) : (
+              <p class="contact__pending">聯絡信箱即將公開。</p>
+            )
+          }
+        </div>
+        {
+          links.length > 0 && (
+            <ul class="contact__links reveal" style="--i: 1" aria-label="其他連結">
+              {links.map((link) => (
+                <li>
+                  <a href={link.href} rel="noopener">
+                    {link.label}
+                    <Arrow />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
+    </Chapter>
+  </main>
+
+  <footer class="footer" data-field="ink" data-chapter id="footer">
+    <p class="footer__name" aria-hidden="true">{site.name}</p>
+    <div class="wrap grid footer__meta">
+      <p class="small footer__copy">© {year} {site.name}</p>
+      <div class="footer__credits">
+        <p class="small footer__credits-title">圖片來源（皆為公有領域）</p>
+        <ul class="small">
+          {
+            archives.map((image) => (
+              <li>
+                <a href={image.source} rel="noopener">
+                  {image.credit}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </footer>
+</Base>
+
+<style is:global>
+  /* 研究：地圖在左，文字在右 */
+  .research {
+    row-gap: clamp(40px, 5vw, 64px);
+  }
+
+  .research__text {
+    display: grid;
+    gap: clamp(40px, 4.4vw, 64px);
+    align-content: start;
+  }
+
+  .research__pubs {
+    display: grid;
+    gap: 12px;
+  }
+
+  /* 臨床：文字在左，病房在右 */
+  .clinical {
+    row-gap: clamp(40px, 5vw, 64px);
+  }
+
+  .clinical__text {
+    display: grid;
+    gap: clamp(40px, 4.4vw, 64px);
+    align-content: start;
+  }
+
+  /* 技術：一整條註記 G，下方是工具清單 */
+  .tech {
+    row-gap: clamp(48px, 6vw, 96px);
+  }
+
+  /* 創作：玫瑰圖放大，文字靠右 */
+  .creative {
+    row-gap: clamp(40px, 5vw, 64px);
+  }
+
+  .creative__text {
+    display: grid;
+    gap: clamp(40px, 4.4vw, 64px);
+    align-content: start;
+  }
+
+  @media (min-width: 900px) {
+    .research__figure {
+      grid-column: 1 / span 6;
+    }
+
+    .research__text {
+      grid-column: 8 / -1;
+    }
+
+    .clinical__text {
+      grid-column: 1 / span 5;
+      grid-row: 1;
+    }
+
+    .clinical__figure {
+      grid-column: 6 / -1;
+      grid-row: 1;
+    }
+
+    .tech__body {
+      grid-column: 1 / span 7;
+    }
+
+    .creative__figure {
+      grid-column: 1 / span 8;
+    }
+
+    .creative__text {
+      grid-column: 9 / -1;
+    }
+  }
+
+  /* 聯絡 */
+  .contact {
+    min-height: auto;
+  }
+
+  .contact__body {
+    row-gap: 40px;
+    align-items: start;
+  }
+
+  .contact__action {
+    display: grid;
+    gap: 20px;
+    justify-items: start;
+  }
+
+  .contact__btn {
+    min-height: 64px;
+    padding-inline: 1.4em;
+    font-size: clamp(20px, 1rem + 0.8vw, 28px);
+  }
+
+  .contact__email {
+    font-size: clamp(20px, 1rem + 0.8vw, 28px);
+    font-weight: 700;
+  }
+
+  .contact__pending {
+    font-size: var(--size-statement);
+    font-weight: 700;
+  }
+
+  .contact__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 32px;
+    font-size: clamp(20px, 1rem + 0.8vw, 28px);
+    font-weight: 700;
+  }
+
+  .contact__links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    min-height: 48px;
+  }
+
+  .contact__links a:hover .btn__arrow {
+    transform: translate(3px, -3px) rotate(-45deg);
+  }
+
+  .contact__links .btn__arrow {
+    transform: rotate(-45deg);
+  }
+
+  @media (min-width: 900px) {
+    .contact__action {
+      grid-column: 1 / span 6;
+    }
+
+    .contact__links {
+      grid-column: 7 / -1;
+      padding-top: 8px;
+    }
+  }
+
+  /* 頁尾：名字再出現一次，滿版 */
+  .footer {
+    container-type: inline-size;
+    padding-bottom: clamp(32px, 4vw, 48px);
+    overflow: hidden;
+  }
+
+  .footer__name {
+    font-size: var(--size-monument-fit);
+    font-weight: 800;
+    line-height: 0.74;
+    letter-spacing: -0.055em;
+    padding: 0.2em var(--margin) 0.12em;
+    margin-left: -0.055em;
+    white-space: nowrap;
+  }
+
+  .footer__meta {
+    row-gap: 24px;
+    padding-top: clamp(32px, 4vw, 56px);
+  }
+
+  .footer__credits {
+    display: grid;
+    gap: 6px;
+  }
+
+  .footer__credits-title {
+    font-weight: 700;
+  }
+
+  .footer__credits a {
+    text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
+  }
+
+  @media (min-width: 900px) {
+    .footer__copy {
+      grid-column: 1 / span 4;
+    }
+
+    .footer__credits {
+      grid-column: 5 / -1;
+    }
+  }
+</style>
+
+<script>
+  // 每個區塊進入畫面時，依序讓標題、文字、圖片出現（只觸發一次）。
+  const groups = document.querySelectorAll<HTMLElement>("[data-reveal]");
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add("is-in");
+          io.unobserve(entry.target);
+        }
+      },
+      { rootMargin: "0px 0px -12% 0px", threshold: 0.05 },
+    );
+    groups.forEach((group) => io.observe(group));
+  } else {
+    groups.forEach((group) => group.classList.add("is-in"));
+  }
+</script>
