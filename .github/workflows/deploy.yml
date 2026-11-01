@@ -25,6 +25,9 @@ jobs:
           cache: npm
       - id: pages
         uses: actions/configure-pages@v5
+        with:
+          # 第一次部署時自動開啟 GitHub Pages（Source = GitHub Actions）
+          enablement: true
       - run: npm ci
       - run: npm run build
         env:
