@@ -1,24 +1,105 @@
 ---
 import type { ModeId } from "../data/profile";
+import { READOUT } from "../scripts/particles";
 
 interface Props {
   id: ModeId | "contact";
-  field: ModeId | "paper" | "ink";
   title: string;
-  titleEn?: string;
+  label: string;
   statement: string;
+  /** 有值時在章節裡放一塊該模式的粒子圖 */
+  viz?: ModeId;
+  flip?: boolean;
   class?: string;
 }
 
-const { id, field, title, titleEn, statement, class: className } = Astro.props;
+const { id, title, label, statement, viz, flip = false, class: className } = Astro.props;
 ---
 
-<section class:list={["chapter", className]} id={id} data-field={field} data-chapter aria-labelledby={`${id}-title`}>
+<section
+  class:list={["chapter", className, { "chapter--flip": flip }]}
+  id={id}
+  data-mode={viz ?? undefined}
+  aria-labelledby={`${id}-title`}
+>
   <div class="wrap grid chapter__head" data-reveal>
-    <h2 class="chapter__title reveal" id={`${id}-title`}>
-      {title}{titleEn && <span class="visually-hidden" lang="en"> {titleEn}</span>}
+    <h2 class="chapter__heading" id={`${id}-title`}>
+      <span class="mono tag reveal">{label}</span>
+      <span class="chapter__title reveal" style="--i: 1">{title}</span>
     </h2>
     <p class="statement reveal" style="--i: 2">{statement}</p>
   </div>
-  <slot />
+
+  {
+    viz ? (
+      <div class="wrap grid chapter__body" data-reveal>
+        <figure class="panel chapter__viz reveal" aria-hidden="true">
+          <canvas data-viz={viz} />
+          <figcaption class="chapter__readout mono">
+            <span class="tag">{label}</span>
+            <span>{READOUT[viz]}</span>
+          </figcaption>
+        </figure>
+        <div class="chapter__content">
+          <slot />
+        </div>
+      </div>
+    ) : (
+      <slot />
+    )
+  }
 </section>
+
+<style>
+  .chapter__body {
+    row-gap: 48px;
+    align-items: start;
+  }
+
+  .chapter__viz {
+    aspect-ratio: 4 / 3;
+  }
+
+  .chapter__viz canvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  .chapter__readout {
+    position: absolute;
+    inset: auto 18px 16px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .chapter__content {
+    display: grid;
+    gap: clamp(36px, 4vw, 56px);
+    align-content: start;
+  }
+
+  @media (min-width: 900px) {
+    .chapter__viz {
+      grid-column: 1 / span 6;
+      grid-row: 1;
+      position: sticky;
+      top: 110px;
+    }
+
+    .chapter__content {
+      grid-column: 8 / -1;
+      grid-row: 1;
+    }
+
+    .chapter--flip .chapter__viz {
+      grid-column: 7 / -1;
+    }
+
+    .chapter--flip .chapter__content {
+      grid-column: 1 / span 5;
+    }
+  }
+</style>

@@ -4,12 +4,6 @@
  * ⚠️ 標記 `sample: true` 的項目是依你的研究／臨床／技術／創作四個面向先寫的「示意內容」，
  *    上線前請逐一確認、改寫或刪除。`npm run build` 時會列出還沒處理的示意項目。
  */
-import type { ImageMetadata } from "astro";
-import scutari from "../assets/archive/scutari-ward-1856.jpg";
-import snow from "../assets/archive/snow-cholera-map-1854.jpg";
-import noteG from "../assets/archive/lovelace-note-g-1843.jpg";
-import rose from "../assets/archive/nightingale-rose-1858.jpg";
-
 export type ModeId = "research" | "clinical" | "tech" | "creative";
 
 export interface Item {
@@ -18,15 +12,6 @@ export interface Item {
   meta?: string;
   href?: string;
   sample?: boolean;
-}
-
-export interface Archive {
-  src: ImageMetadata;
-  alt: string;
-  caption: string;
-  credit: string;
-  source: string;
-  position?: string;
 }
 
 /* ── 基本資料 ─────────────────────────────────────────── */
@@ -40,8 +25,7 @@ export const site = {
 };
 
 export const contact = {
-  // TODO(Bob)：填入要公開的聯絡信箱。留空時，「寄信合作」按鈕會改為跳到聯絡區。
-  email: "",
+  email: "bobyu89@gmail.com",
   subject: "合作邀約：",
   links: [
     { label: "GitHub", href: "https://github.com/bobyu89" },
@@ -52,7 +36,15 @@ export const contact = {
   ],
 };
 
-/* ── 首屏：同一段自我介紹，四種模式 ─────────────────────── */
+/* ── 首屏 ─────────────────────────────────────────────── */
+
+export const hero = {
+  // 首屏不放名字：標題直接說你在做的四件事
+  title: ["照護、證據、", "程式、畫筆。"],
+  badge: "Clinical × Research × AI × Art",
+};
+
+/* ── 同一段自我介紹，四種模式 ─────────────────────────── */
 
 export const intro = {
   all: "我做臨床護理、實證研究、AI 工具與插畫。同一個問題，我用四種方式回答。",
@@ -92,14 +84,6 @@ export const research = {
   ] satisfies Item[],
   // TODO(Bob)：依 APA 7 填入著作。title 放篇名，meta 放「作者（年份）．期刊，卷(期)」，href 放 DOI 連結。
   publications: [] as Item[],
-  image: {
-    src: snow,
-    alt: "John Snow 繪製的倫敦 Soho 區街道圖，黑色短線標示每戶的霍亂死亡人數，集中在 Broad Street 水泵周圍。",
-    caption: "John Snow 的霍亂死亡分布圖，1854。黑色短線是每戶的死亡人數，集中在 Broad Street 的水泵四周。",
-    credit: "John Snow, On the Mode of Communication of Cholera, 1854",
-    source: "https://commons.wikimedia.org/wiki/File:Snow-cholera-map-1.jpg",
-    position: "50% 45%",
-  } satisfies Archive,
 };
 
 export const clinical = {
@@ -112,14 +96,6 @@ export const clinical = {
     { title: "症狀評估與早期辨識", text: "在惡化之前，看見那個變化。", sample: true },
     { title: "讓指引走進日常照護", text: "Guideline 不只寫在文件裡。", sample: true },
   ] satisfies Item[],
-  image: {
-    src: scutari,
-    alt: "十九世紀的石版畫：斯庫塔里軍醫院的長形病房，病床沿牆排列，畫面中央一位著黑衣的女性正與軍官交談。",
-    caption: "斯庫塔里軍醫院的病房，1856。南丁格爾在這裡記錄死亡數據，後來據此推動醫院衛生改革。",
-    credit: "W. Simpson 繪，E. Walker 石版，Day & Son 印行，1856（Library of Congress）",
-    source: "https://commons.wikimedia.org/wiki/File:Hospital_at_Scutari_2.jpg",
-    position: "38% 60%",
-  } satisfies Archive,
 };
 
 export const tech = {
@@ -146,14 +122,6 @@ export const tech = {
       sample: true,
     },
   ] satisfies Item[],
-  image: {
-    src: noteG,
-    alt: "Ada Lovelace 註記 G 中的表格，逐列列出分析機計算伯努利數的每一步運算與變數。",
-    caption: "Ada Lovelace 的註記 G，1843。逐步列出機器計算伯努利數的運算，常被稱為第一個公開發表的程式。",
-    credit: "Ada Lovelace, Sketch of the Analytical Engine, Note G, 1843",
-    source: "https://commons.wikimedia.org/wiki/File:Diagram_for_the_computation_of_Bernoulli_numbers.jpg",
-    position: "0% 0%",
-  } satisfies Archive,
 };
 
 export const creative = {
@@ -166,14 +134,6 @@ export const creative = {
     { title: "研究概念圖", text: "把研究架構與流程畫成一張圖。", sample: true },
     { title: "AI 影像實驗", text: "prompt、構圖與敘事的實驗紀錄。", sample: true },
   ] satisfies Item[],
-  image: {
-    src: rose,
-    alt: "南丁格爾的玫瑰圖：兩個由楔形組成的圓形圖表，藍色楔形面積遠大於紅色與黑色，代表多數死亡來自可預防的傳染病。",
-    caption: "南丁格爾〈東方軍隊死因圖〉，1858。藍色是可預防的傳染病死亡，面積遠大於戰傷。",
-    credit: "Florence Nightingale, Diagram of the Causes of Mortality in the Army in the East, 1858",
-    source: "https://commons.wikimedia.org/wiki/File:Nightingale-mortality.jpg",
-    position: "50% 50%",
-  } satisfies Archive,
 };
 
 export const closing = {
@@ -189,8 +149,6 @@ export const modes: { id: ModeId; zh: string; en: string }[] = [
   { id: "tech", zh: "技術", en: "Tech" },
   { id: "creative", zh: "創作", en: "Creative" },
 ];
-
-export const archives: Archive[] = [research.image, clinical.image, tech.image, creative.image];
 
 export const sampleItems = [research, clinical, tech, creative].flatMap((chapter) =>
   chapter.items.filter((item) => item.sample).map((item) => item.title),

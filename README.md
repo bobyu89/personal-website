@@ -1,6 +1,6 @@
 # Bob Yu 個人網站
 
-臨床護理、實證研究、AI 工具與插畫：一個人，四種模式。以 [Astro](https://astro.build) 建置的單頁靜態網站，部署在 GitHub Pages。
+臨床護理、實證研究、AI 工具與插畫：一個人，四種模式。以 [Astro](https://astro.build) 建置的單頁靜態網站，部署在 GitHub Pages。首屏是即時繪製的粒子場，切換模式時粒子會重組成該領域的圖形。
 
 ## 更新內容
 
@@ -8,10 +8,9 @@
 
 上線前必做：
 
-1. **聯絡信箱**：`contact.email` 填入要公開的信箱（留空時按鈕會跳到聯絡區）。
-2. **示意內容**：標記 `sample: true` 的項目是先寫的示意，請確認、改寫或刪除。`npm run build` 會列出還剩哪些。
-3. **著作**：`research.publications` 依 APA 7 填入（`title`、`meta`、`href` 放 DOI）。
-4. **其他連結**：ORCID、Google Scholar、LinkedIn，留空的不會顯示。
+1. **示意內容**：標記 `sample: true` 的項目是先寫的示意，請確認、改寫或刪除。`npm run build` 會列出還剩哪些。
+2. **著作**：`research.publications` 依 APA 7 填入（`title`、`meta`、`href` 放 DOI）。
+3. **其他連結**：ORCID、Google Scholar、LinkedIn，留空的不會顯示。
 
 ## 本機開發
 
@@ -36,8 +35,4 @@ npm run dev
 
 ## 設計
 
-視覺規則記錄在 [`DESIGN.md`](DESIGN.md)。設計流程參考 [impeccable](https://github.com/pbakaus/impeccable) 與 [taste-skill](https://github.com/Leonxlnx/taste-skill)。
-
-## 圖片
-
-`src/assets/archive/` 裡的四張歷史圖像皆為公有領域（Wikimedia Commons），出處列在頁尾。
+視覺規則記錄在 [`DESIGN.md`](DESIGN.md)。設計流程參考 [impeccable](https://github.com/pbakaus/impeccable)、[taste-skill](https://github.com/Leonxlnx/taste-skill) 與 [MotionSites](https://motionsites.ai) 的 hero 範例。

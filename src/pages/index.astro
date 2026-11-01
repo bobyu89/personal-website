@@ -3,10 +3,9 @@ import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Hero from "../components/Hero.astro";
 import Chapter from "../components/Chapter.astro";
-import Archive from "../components/Archive.astro";
 import Entries from "../components/Entries.astro";
 import Arrow from "../components/Arrow.astro";
-import { archives, clinical, closing, contact, creative, research, sampleItems, site, tech } from "../data/profile";
+import { clinical, closing, contact, creative, research, sampleItems, site, tech } from "../data/profile";
 
 if (import.meta.env.PROD && sampleItems.length) {
   console.warn(
@@ -25,340 +24,174 @@ const year = new Date().getFullYear();
   <Hero />
 
   <main id="main">
-    <Chapter id="research" field="research" title="研究" titleEn="Research" statement={research.statement}>
-      <div class="wrap grid research" data-reveal>
-        <Archive
-          class="research__figure reveal"
-          image={research.image}
-          ratio="1 / 1"
-          sizes="(min-width: 900px) 48vw, 100vw"
-        />
-        <div class="research__text">
-          <p class="body reveal" style="--i: 1">{research.body}</p>
-          <Entries class="reveal" title={research.listTitle} items={research.items} />
-          <div class="research__pubs reveal" style="--i: 2">
-            {
-              research.publications.length ? (
-                <Entries title="著作" items={research.publications} />
-              ) : (
-                <>
-                  <h3 class="list-title">著作</h3>
-                  <p>
-                    著作清單整理中。
-                    {scholarLinks.length > 0 && (
-                      <>
-                        完整列表請見
-                        {scholarLinks.map((link, i) => (
-                          <>
-                            {i > 0 && "、"}
-                            <a href={link.href} rel="noopener">
-                              {link.label}
-                            </a>
-                          </>
-                        ))}
-                        。
-                      </>
-                    )}
-                  </p>
-                </>
-              )
-            }
-          </div>
-        </div>
-      </div>
-    </Chapter>
-
-    <Chapter id="clinical" field="clinical" title="臨床" titleEn="Clinical" statement={clinical.statement}>
-      <div class="wrap grid clinical" data-reveal>
-        <div class="clinical__text">
-          <p class="body reveal">{clinical.body}</p>
-          <Entries class="reveal" title={clinical.listTitle} items={clinical.items} />
-        </div>
-        <Archive
-          class="clinical__figure reveal"
-          image={clinical.image}
-          ratio="3 / 2"
-          sizes="(min-width: 900px) 56vw, 100vw"
-        />
-      </div>
-    </Chapter>
-
-    <Chapter id="tech" field="tech" title="技術" titleEn="Tech" statement={tech.statement}>
-      <div class="wrap grid tech" data-reveal>
-        <p class="body tech__body reveal">{tech.body}</p>
-        <Archive
-          class="tech__figure reveal"
-          image={tech.image}
-          ratio="16 / 7"
-          sizes="100vw"
-        />
-        <Entries class="tech__list reveal" title={tech.listTitle} items={tech.items} layout="rows" />
-      </div>
-    </Chapter>
-
-    <Chapter id="creative" field="creative" title="創作" titleEn="Creative" statement={creative.statement}>
-      <div class="wrap grid creative" data-reveal>
-        <Archive
-          class="creative__figure reveal"
-          image={creative.image}
-          sizes="(min-width: 900px) 64vw, 100vw"
-        />
-        <div class="creative__text">
-          <p class="body reveal" style="--i: 1">{creative.body}</p>
-          <Entries class="reveal" title={creative.listTitle} items={creative.items} />
-        </div>
-      </div>
-    </Chapter>
-
-    <Chapter id="contact" field="paper" title={closing.heading} statement={closing.statement} class="contact">
-      <div class="wrap grid contact__body" data-reveal>
-        <div class="contact__action reveal">
-          {
-            mailto ? (
-              <>
-                <a class="btn contact__btn" href={mailto}>
-                  寄信給我
-                  <Arrow />
-                </a>
-                <p class="contact__email">
-                  <a href={mailto}>{contact.email}</a>
-                </p>
-              </>
-            ) : (
-              <p class="contact__pending">聯絡信箱即將公開。</p>
-            )
-          }
-        </div>
+    <Chapter id="research" title="研究" label="Research" viz="research" statement={research.statement}>
+      <p class="body reveal">{research.body}</p>
+      <Entries class="reveal" title={research.listTitle} items={research.items} />
+      <div class="pubs reveal">
         {
-          links.length > 0 && (
-            <ul class="contact__links reveal" style="--i: 1" aria-label="其他連結">
-              {links.map((link) => (
-                <li>
-                  <a href={link.href} rel="noopener">
-                    {link.label}
-                    <Arrow />
-                  </a>
-                </li>
-              ))}
-            </ul>
+          research.publications.length ? (
+            <Entries title="著作" items={research.publications} />
+          ) : (
+            <>
+              <h3 class="list-title">著作</h3>
+              <p class="small">
+                著作清單整理中。
+                {scholarLinks.length > 0 && (
+                  <>
+                    完整列表請見
+                    {scholarLinks.map((link, i) => (
+                      <>
+                        {i > 0 && "、"}
+                        <a href={link.href} rel="noopener">
+                          {link.label}
+                        </a>
+                      </>
+                    ))}
+                    。
+                  </>
+                )}
+              </p>
+            </>
           )
         }
       </div>
     </Chapter>
+
+    <Chapter id="clinical" title="臨床" label="Clinical" viz="clinical" flip statement={clinical.statement}>
+      <p class="body reveal">{clinical.body}</p>
+      <Entries class="reveal" title={clinical.listTitle} items={clinical.items} />
+    </Chapter>
+
+    <Chapter id="tech" title="技術" label="Tech" viz="tech" statement={tech.statement}>
+      <p class="body reveal">{tech.body}</p>
+      <Entries class="reveal" title={tech.listTitle} items={tech.items} />
+    </Chapter>
+
+    <Chapter id="creative" title="創作" label="Creative" viz="creative" flip statement={creative.statement}>
+      <p class="body reveal">{creative.body}</p>
+      <Entries class="reveal" title={creative.listTitle} items={creative.items} />
+    </Chapter>
+
+    <Chapter id="contact" title={closing.heading} label="Contact" statement={closing.statement} class="contact">
+      <div class="wrap contact__body" data-reveal>
+        <div class="panel contact__card reveal">
+          {
+            mailto ? (
+              <a class="contact__email" href={mailto}>
+                {contact.email}
+                <Arrow />
+              </a>
+            ) : (
+              <p class="contact__email">聯絡信箱即將公開。</p>
+            )
+          }
+          <div class="contact__row">
+            {mailto && (
+              <a class="btn" href={mailto}>
+                寄信給我
+                <Arrow />
+              </a>
+            )}
+            {links.map((link) => (
+              <a class="btn btn--ghost" href={link.href} rel="noopener">
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </Chapter>
   </main>
 
-  <footer class="footer" data-field="ink" data-chapter id="footer">
-    <p class="footer__name" aria-hidden="true">{site.name}</p>
-    <div class="wrap grid footer__meta">
-      <p class="small footer__copy">© {year} {site.name}</p>
-      <div class="footer__credits">
-        <p class="small footer__credits-title">圖片來源（皆為公有領域）</p>
-        <ul class="small">
-          {
-            archives.map((image) => (
-              <li>
-                <a href={image.source} rel="noopener">
-                  {image.credit}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-    </div>
+  <footer class="footer wrap">
+    <p class="small">© {year} {site.name}</p>
+    <p class="small">以 Astro 建置 · 首屏粒子以 Canvas 即時繪製</p>
+    <a class="small footer__top" href="#top">回到頂端 ↑</a>
   </footer>
 </Base>
 
 <style is:global>
-  /* 研究：地圖在左，文字在右 */
-  .research {
-    row-gap: clamp(40px, 5vw, 64px);
-  }
-
-  .research__text {
-    display: grid;
-    gap: clamp(40px, 4.4vw, 64px);
-    align-content: start;
-  }
-
-  .research__pubs {
+  .pubs {
     display: grid;
     gap: 12px;
   }
 
-  /* 臨床：文字在左，病房在右 */
-  .clinical {
-    row-gap: clamp(40px, 5vw, 64px);
-  }
-
-  .clinical__text {
+  .contact__card {
     display: grid;
-    gap: clamp(40px, 4.4vw, 64px);
-    align-content: start;
+    gap: 32px;
+    padding: clamp(28px, 4vw, 56px);
   }
 
-  /* 技術：一整條註記 G，下方是工具清單 */
-  .tech {
-    row-gap: clamp(48px, 6vw, 96px);
-  }
-
-  /* 創作：玫瑰圖放大，文字靠右 */
-  .creative {
-    row-gap: clamp(40px, 5vw, 64px);
-  }
-
-  .creative__text {
-    display: grid;
-    gap: clamp(40px, 4.4vw, 64px);
-    align-content: start;
-  }
-
-  @media (min-width: 900px) {
-    .research__figure {
-      grid-column: 1 / span 6;
-    }
-
-    .research__text {
-      grid-column: 8 / -1;
-    }
-
-    .clinical__text {
-      grid-column: 1 / span 5;
-      grid-row: 1;
-    }
-
-    .clinical__figure {
-      grid-column: 6 / -1;
-      grid-row: 1;
-    }
-
-    .tech__body {
-      grid-column: 1 / span 7;
-    }
-
-    .creative__figure {
-      grid-column: 1 / span 8;
-    }
-
-    .creative__text {
-      grid-column: 9 / -1;
-    }
-  }
-
-  /* 聯絡 */
-  .contact {
-    min-height: auto;
-  }
-
-  .contact__body {
-    row-gap: 40px;
-    align-items: start;
-  }
-
-  .contact__action {
-    display: grid;
-    gap: 20px;
-    justify-items: start;
-  }
-
-  .contact__btn {
-    min-height: 64px;
-    padding-inline: 1.4em;
-    font-size: clamp(20px, 1rem + 0.8vw, 28px);
+  /* 卡片後方一團多色微光，四個模式的顏色都在 */
+  .contact__card::before {
+    content: "";
+    position: absolute;
+    inset: -40% -10% auto auto;
+    width: 60%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgb(96 140 255 / 0.18), transparent);
+    pointer-events: none;
   }
 
   .contact__email {
-    font-size: clamp(20px, 1rem + 0.8vw, 28px);
-    font-weight: 700;
-  }
-
-  .contact__pending {
-    font-size: var(--size-statement);
-    font-weight: 700;
-  }
-
-  .contact__links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px 32px;
-    font-size: clamp(20px, 1rem + 0.8vw, 28px);
-    font-weight: 700;
-  }
-
-  .contact__links a {
+    position: relative;
     display: inline-flex;
     align-items: center;
     gap: 0.4em;
-    min-height: 48px;
+    width: fit-content;
+    font-size: clamp(22px, 0.6rem + 3.6vw, 64px);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    text-decoration: none;
+    overflow-wrap: break-word;
   }
 
-  .contact__links a:hover .btn__arrow {
-    transform: translate(3px, -3px) rotate(-45deg);
-  }
-
-  .contact__links .btn__arrow {
+  .contact__email .btn__arrow {
     transform: rotate(-45deg);
+    transition: transform 0.3s var(--ease-out);
   }
 
-  @media (min-width: 900px) {
-    .contact__action {
-      grid-column: 1 / span 6;
-    }
-
-    .contact__links {
-      grid-column: 7 / -1;
-      padding-top: 8px;
-    }
+  .contact__email:hover .btn__arrow {
+    transform: rotate(-45deg) translateX(4px);
   }
 
-  /* 頁尾：名字再出現一次，滿版 */
+  .contact__row {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
   .footer {
-    container-type: inline-size;
-    padding-bottom: clamp(32px, 4vw, 48px);
-    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 32px;
+    padding-block: 32px 40px;
+    border-top: 1px solid var(--line);
   }
 
-  .footer__name {
-    font-size: var(--size-monument-fit);
-    font-weight: 800;
-    line-height: 0.74;
-    letter-spacing: -0.055em;
-    padding: 0.2em var(--margin) 0.12em;
-    margin-left: -0.055em;
-    white-space: nowrap;
-  }
-
-  .footer__meta {
-    row-gap: 24px;
-    padding-top: clamp(32px, 4vw, 56px);
-  }
-
-  .footer__credits {
-    display: grid;
-    gap: 6px;
-  }
-
-  .footer__credits-title {
-    font-weight: 700;
-  }
-
-  .footer__credits a {
-    text-decoration-color: color-mix(in oklab, currentColor 45%, transparent);
-  }
-
-  @media (min-width: 900px) {
-    .footer__copy {
-      grid-column: 1 / span 4;
-    }
-
-    .footer__credits {
-      grid-column: 5 / -1;
-    }
+  .footer__top {
+    margin-left: auto;
+    text-decoration: none;
   }
 </style>
 
 <script>
-  // 每個區塊進入畫面時，依序讓標題、文字、圖片出現（只觸發一次）。
+  import { createField, type Shape } from "../scripts/particles";
+
+  // 章節裡的小粒子圖：進入畫面才建立，離開就暫停
+  document.querySelectorAll<HTMLCanvasElement>("canvas[data-viz]").forEach((canvas) => {
+    createField({
+      canvas,
+      shape: canvas.dataset.viz as Shape,
+      count: innerWidth < 700 ? 900 : 1500,
+      scale: () => 0.5,
+    });
+  });
+
+  // 每個區塊進入畫面時，依序淡入（只觸發一次）
   const groups = document.querySelectorAll<HTMLElement>("[data-reveal]");
   if ("IntersectionObserver" in window) {
     const io = new IntersectionObserver(
@@ -369,7 +202,7 @@ const year = new Date().getFullYear();
           io.unobserve(entry.target);
         }
       },
-      { rootMargin: "0px 0px -12% 0px", threshold: 0.05 },
+      { rootMargin: "0px 0px -10% 0px", threshold: 0.05 },
     );
     groups.forEach((group) => io.observe(group));
   } else {
