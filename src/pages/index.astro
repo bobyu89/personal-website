@@ -1,0 +1,211 @@
+---
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Hero from "../components/Hero.astro";
+import Chapter from "../components/Chapter.astro";
+import Entries from "../components/Entries.astro";
+import Arrow from "../components/Arrow.astro";
+import { clinical, closing, contact, creative, research, sampleItems, site, tech } from "../data/profile";
+
+if (import.meta.env.PROD && sampleItems.length) {
+  console.warn(
+    `\n[profile] 還有 ${sampleItems.length} 個示意項目沒處理（src/data/profile.ts 裡的 sample: true）：\n  - ${sampleItems.join("\n  - ")}\n`,
+  );
+}
+
+const mailto = contact.email ? `mailto:${contact.email}?subject=${encodeURIComponent(contact.subject)}` : undefined;
+const links = contact.links.filter((link) => link.href);
+const scholarLinks = links.filter((link) => ["ORCID", "Google Scholar"].includes(link.label));
+const year = new Date().getFullYear();
+---
+
+<Base>
+  <Nav />
+  <Hero />
+
+  <main id="main">
+    <Chapter id="research" title="研究" label="Research" viz="research" statement={research.statement}>
+      <p class="body reveal">{research.body}</p>
+      <Entries class="reveal" title={research.listTitle} items={research.items} />
+      <div class="pubs reveal">
+        {
+          research.publications.length ? (
+            <Entries title="著作" items={research.publications} />
+          ) : (
+            <>
+              <h3 class="list-title">著作</h3>
+              <p class="small">
+                著作清單整理中。
+                {scholarLinks.length > 0 && (
+                  <>
+                    完整列表請見
+                    {scholarLinks.map((link, i) => (
+                      <>
+                        {i > 0 && "、"}
+                        <a href={link.href} rel="noopener">
+                          {link.label}
+                        </a>
+                      </>
+                    ))}
+                    。
+                  </>
+                )}
+              </p>
+            </>
+          )
+        }
+      </div>
+    </Chapter>
+
+    <Chapter id="clinical" title="臨床" label="Clinical" viz="clinical" flip statement={clinical.statement}>
+      <p class="body reveal">{clinical.body}</p>
+      <Entries class="reveal" title={clinical.listTitle} items={clinical.items} />
+    </Chapter>
+
+    <Chapter id="tech" title="技術" label="Tech" viz="tech" statement={tech.statement}>
+      <p class="body reveal">{tech.body}</p>
+      <Entries class="reveal" title={tech.listTitle} items={tech.items} />
+    </Chapter>
+
+    <Chapter id="creative" title="創作" label="Creative" viz="creative" flip statement={creative.statement}>
+      <p class="body reveal">{creative.body}</p>
+      <Entries class="reveal" title={creative.listTitle} items={creative.items} />
+    </Chapter>
+
+    <Chapter id="contact" title={closing.heading} label="Contact" statement={closing.statement} class="contact">
+      <div class="wrap contact__body" data-reveal>
+        <div class="panel contact__card reveal">
+          {
+            mailto ? (
+              <a class="contact__email" href={mailto}>
+                {contact.email}
+                <Arrow />
+              </a>
+            ) : (
+              <p class="contact__email">聯絡信箱即將公開。</p>
+            )
+          }
+          <div class="contact__row">
+            {mailto && (
+              <a class="btn" href={mailto}>
+                寄信給我
+                <Arrow />
+              </a>
+            )}
+            {links.map((link) => (
+              <a class="btn btn--ghost" href={link.href} rel="noopener">
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </Chapter>
+  </main>
+
+  <footer class="footer wrap">
+    <p class="small">© {year} {site.name}</p>
+    <p class="small">以 Astro 建置 · 首屏粒子以 Canvas 即時繪製</p>
+    <a class="small footer__top" href="#top">回到頂端 ↑</a>
+  </footer>
+</Base>
+
+<style is:global>
+  .pubs {
+    display: grid;
+    gap: 12px;
+  }
+
+  .contact__card {
+    display: grid;
+    gap: 32px;
+    padding: clamp(28px, 4vw, 56px);
+  }
+
+  /* 卡片後方一團多色微光，四個模式的顏色都在 */
+  .contact__card::before {
+    content: "";
+    position: absolute;
+    inset: -40% -10% auto auto;
+    width: 60%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgb(96 140 255 / 0.18), transparent);
+    pointer-events: none;
+  }
+
+  .contact__email {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    width: fit-content;
+    font-size: clamp(22px, 0.6rem + 3.6vw, 64px);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    text-decoration: none;
+    overflow-wrap: break-word;
+  }
+
+  .contact__email .btn__arrow {
+    transform: rotate(-45deg);
+    transition: transform 0.3s var(--ease-out);
+  }
+
+  .contact__email:hover .btn__arrow {
+    transform: rotate(-45deg) translateX(4px);
+  }
+
+  .contact__row {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 32px;
+    padding-block: 32px 40px;
+    border-top: 1px solid var(--line);
+  }
+
+  .footer__top {
+    margin-left: auto;
+    text-decoration: none;
+  }
+</style>
+
+<script>
+  import { createField, type Shape } from "../scripts/particles";
+
+  // 章節裡的小粒子圖：進入畫面才建立，離開就暫停
+  document.querySelectorAll<HTMLCanvasElement>("canvas[data-viz]").forEach((canvas) => {
+    createField({
+      canvas,
+      shape: canvas.dataset.viz as Shape,
+      count: innerWidth < 700 ? 900 : 1500,
+      scale: () => 0.5,
+    });
+  });
+
+  // 每個區塊進入畫面時，依序淡入（只觸發一次）
+  const groups = document.querySelectorAll<HTMLElement>("[data-reveal]");
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add("is-in");
+          io.unobserve(entry.target);
+        }
+      },
+      { rootMargin: "0px 0px -10% 0px", threshold: 0.05 },
+    );
+    groups.forEach((group) => io.observe(group));
+  } else {
+    groups.forEach((group) => group.classList.add("is-in"));
+  }
+</script>

@@ -1,0 +1,412 @@
+---
+import { contact, hero, intro, modes } from "../data/profile";
+import { READOUT } from "../scripts/particles";
+import Arrow from "./Arrow.astro";
+
+const tabs = [{ id: "all", zh: "整合", en: "All" }, ...modes];
+const codeLines = intro.tech.split("\n");
+const mailto = contact.email
+  ? `mailto:${contact.email}?subject=${encodeURIComponent(contact.subject)}`
+  : "#contact";
+---
+
+<header class="hero" id="top" data-mode="all">
+  <canvas class="hero__canvas" aria-hidden="true"></canvas>
+  <div class="hero__glow" aria-hidden="true"></div>
+
+  <div class="hero__inner wrap grid">
+    <div class="hero__copy">
+      <p class="hero__badge mono"><span class="tag">{hero.badge}</span></p>
+      <h1 class="hero__title">
+        {hero.title.map((line) => <span class="hero__line">{line}</span>)}
+        <span class="visually-hidden">：Bob Yu 的個人網站</span>
+      </h1>
+
+      <div class="hero__panels">
+        <div class="hero__panel is-active" role="tabpanel" id="panel-all" aria-labelledby="tab-all" tabindex="0" data-panel="all">
+          <p class="hero__lead">{intro.all}</p>
+        </div>
+        <div class="hero__panel" role="tabpanel" id="panel-research" aria-labelledby="tab-research" tabindex="0" data-panel="research" hidden>
+          <dl class="hero__abstract">
+            {
+              intro.research.map((row) => (
+                <div>
+                  <dt class="mono">{row.label}</dt>
+                  <dd>{row.text}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </div>
+        <div class="hero__panel" role="tabpanel" id="panel-clinical" aria-labelledby="tab-clinical" tabindex="0" data-panel="clinical" hidden>
+          <p class="hero__lead">{intro.clinical.text}</p>
+          <p class="small hero__cite"><a href={intro.clinical.citeHref} rel="noopener">{intro.clinical.cite}</a></p>
+        </div>
+        <div class="hero__panel" role="tabpanel" id="panel-tech" aria-labelledby="tab-tech" tabindex="0" data-panel="tech" hidden>
+          <pre class="hero__code"><code>{codeLines.map((line) => <span class:list={{ comment: line.trim().startsWith("//") }}>{line}{"\n"}</span>)}</code></pre>
+        </div>
+        <div class="hero__panel" role="tabpanel" id="panel-creative" aria-labelledby="tab-creative" tabindex="0" data-panel="creative" hidden>
+          <p class="hero__lead">{intro.creative}</p>
+        </div>
+      </div>
+
+      <div class="hero__tabs" role="tablist" aria-label="切換介紹模式">
+        {
+          tabs.map((tab, i) => (
+            <button
+              type="button"
+              role="tab"
+              class="hero__tab"
+              id={`tab-${tab.id}`}
+              aria-controls={`panel-${tab.id}`}
+              aria-selected={i === 0 ? "true" : "false"}
+              tabindex={i === 0 ? 0 : -1}
+              data-mode={tab.id}
+            >
+              <span class="hero__dot" aria-hidden="true" />
+              {tab.zh}
+              <span class="hero__tab-en" lang="en">
+                {tab.en}
+              </span>
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="hero__actions">
+        <a class="btn" href={mailto}>一起合作<Arrow /></a>
+        <a class="btn btn--ghost" href="#research">看我在做什麼</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero__bar wrap mono" aria-hidden="true">
+    <span class="tag hero__live">Live</span>
+    <span class="hero__readout" data-readout>{READOUT.all}</span>
+    <span class="hero__scroll">Scroll</span>
+  </div>
+</header>
+
+<style>
+  .hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .hero__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    filter: drop-shadow(0 0 6px color-mix(in oklab, var(--accent) 55%, transparent));
+    transition: filter 0.8s var(--ease-out);
+  }
+
+  /* 圖形後方的一團微光，顏色跟著模式變 */
+  .hero__glow {
+    position: absolute;
+    z-index: -2;
+    top: 50%;
+    left: 70%;
+    width: min(70vw, 900px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, color-mix(in oklab, var(--accent) 22%, transparent), transparent);
+    transform: translate(-50%, -50%);
+    transition: background 0.8s var(--ease-out);
+    pointer-events: none;
+  }
+
+  .hero__inner {
+    flex: 1;
+    align-items: center;
+    padding-top: 120px;
+    padding-bottom: 32px;
+  }
+
+  .hero__copy {
+    display: grid;
+    gap: 28px;
+    justify-items: start;
+  }
+
+  .hero__badge {
+    padding: 7px 14px 7px 12px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.04);
+    box-shadow: inset 0 0 0 1px var(--line-strong);
+    font-size: 12px;
+  }
+
+  .hero__title {
+    font-size: var(--size-display);
+    font-weight: 700;
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+  }
+
+  .hero__line {
+    display: block;
+  }
+
+  .hero__line:last-of-type {
+    color: color-mix(in oklab, var(--text) 50%, var(--accent));
+    transition: color 0.6s var(--ease-out);
+  }
+
+  /* 面板疊在同一格，切換時版面不跳動 */
+  .hero__panels {
+    display: grid;
+    min-height: 6em;
+    width: 100%;
+    max-width: 34em;
+  }
+
+  .hero__panel {
+    grid-area: 1 / 1;
+  }
+
+  :global(.js) .hero__panel:not(.is-active) {
+    visibility: hidden;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .hero__panel {
+      transition:
+        opacity 0.5s var(--ease-out),
+        filter 0.5s var(--ease-out),
+        transform 0.5s var(--ease-out);
+    }
+
+    :global(.js) .hero__panel:not(.is-active) {
+      opacity: 0;
+      filter: blur(6px);
+      transform: translateY(8px);
+    }
+  }
+
+  .hero__lead {
+    font-size: clamp(17px, 0.9rem + 0.45vw, 21px);
+    line-height: 1.7;
+    color: color-mix(in oklab, var(--text) 82%, var(--bg));
+  }
+
+  .hero__cite {
+    margin-top: 10px;
+  }
+
+  .hero__abstract {
+    display: grid;
+    gap: 6px;
+    font-size: clamp(16px, 0.85rem + 0.4vw, 19px);
+  }
+
+  .hero__abstract div {
+    display: grid;
+    grid-template-columns: 4.2em 1fr;
+    gap: 12px;
+    align-items: baseline;
+  }
+
+  .hero__abstract dt {
+    color: var(--accent);
+  }
+
+  .hero__code {
+    font-size: clamp(12.5px, 0.6rem + 0.45vw, 15px);
+    line-height: 1.65;
+    white-space: pre;
+    overflow-x: auto;
+    color: var(--text);
+  }
+
+  .hero__code .comment {
+    color: var(--accent);
+  }
+
+  /* 模式切換：一排膠囊按鈕 */
+  .hero__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.03);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+
+  .hero__tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 16px 0 14px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      color 0.2s,
+      background-color 0.25s var(--ease-out),
+      box-shadow 0.25s var(--ease-out);
+  }
+
+  .hero__tab:hover {
+    color: var(--text);
+    background: rgb(255 255 255 / 0.05);
+  }
+
+  .hero__tab[aria-selected="true"] {
+    color: var(--text);
+    background: rgb(255 255 255 / 0.09);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--accent) 45%, transparent);
+  }
+
+  .hero__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--dot, var(--text));
+    opacity: 0.55;
+  }
+
+  .hero__tab[aria-selected="true"] .hero__dot {
+    opacity: 1;
+    box-shadow: 0 0 10px var(--dot, var(--text));
+  }
+
+  .hero__tab[data-mode="research"] { --dot: var(--research); }
+  .hero__tab[data-mode="clinical"] { --dot: var(--clinical); }
+  .hero__tab[data-mode="tech"] { --dot: var(--tech); }
+  .hero__tab[data-mode="creative"] { --dot: var(--creative); }
+
+  .hero__tab-en {
+    display: none;
+  }
+
+  :global(html:not(.js)) .hero__tabs {
+    display: none;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .hero__bar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding-bottom: 28px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .hero__readout {
+    color: var(--text);
+    transition: opacity 0.3s;
+  }
+
+  .hero__scroll {
+    margin-left: auto;
+  }
+
+  @media (min-width: 900px) {
+    .hero__copy {
+      grid-column: 1 / span 6;
+    }
+  }
+
+  @media (max-width: 899px) {
+    .hero__glow {
+      top: 26%;
+      left: 50%;
+      width: 110vw;
+    }
+
+    .hero__inner {
+      align-items: end;
+      padding-top: 46svh;
+    }
+
+    .hero__title {
+      font-size: clamp(42px, 11vw, 72px);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero__tab {
+      padding: 0 11px 0 10px;
+      font-size: 14px;
+    }
+
+    .hero__scroll {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { createField, READOUT, type Shape } from "../scripts/particles";
+
+  const hero = document.querySelector<HTMLElement>(".hero")!;
+  const canvas = hero.querySelector<HTMLCanvasElement>(".hero__canvas")!;
+  const readout = hero.querySelector<HTMLElement>("[data-readout]")!;
+  const tabs = Array.from(hero.querySelectorAll<HTMLButtonElement>(".hero__tab"));
+  const panels = Array.from(hero.querySelectorAll<HTMLElement>(".hero__panel"));
+  const wide = matchMedia("(min-width: 900px)");
+
+  const field = createField({
+    canvas,
+    center: () => (wide.matches ? [0.7, 0.5] : [0.5, 0.25]),
+    scale: () => (wide.matches ? 0.44 : 0.52),
+  });
+
+  for (const panel of panels) {
+    panel.hidden = false;
+    panel.inert = !panel.classList.contains("is-active");
+  }
+
+  const select = (tab: HTMLButtonElement) => {
+    const mode = (tab.dataset.mode ?? "all") as Shape;
+    hero.dataset.mode = mode;
+    field.setShape(mode);
+    readout.textContent = READOUT[mode];
+    for (const t of tabs) {
+      const on = t === tab;
+      t.setAttribute("aria-selected", String(on));
+      t.tabIndex = on ? 0 : -1;
+    }
+    for (const panel of panels) {
+      const on = panel.dataset.panel === mode;
+      panel.classList.toggle("is-active", on);
+      panel.inert = !on;
+    }
+  };
+
+  tabs.forEach((tab, i) => {
+    tab.addEventListener("click", () => select(tab));
+    tab.addEventListener("keydown", (event) => {
+      const keys: Record<string, number> = {
+        ArrowRight: i + 1,
+        ArrowLeft: i - 1,
+        Home: 0,
+        End: tabs.length - 1,
+      };
+      if (!(event.key in keys)) return;
+      event.preventDefault();
+      const next = tabs[(keys[event.key] + tabs.length) % tabs.length];
+      next.focus();
+      select(next);
+    });
+  });
+</script>
