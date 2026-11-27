@@ -5,7 +5,12 @@ import "../../../../../styles/global.css";
 import { workshop, stations, s1 } from "../../../../../data/workshop-01";
 
 const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
-const img = (n: string) => `${base}img/forest/${n}.webp`;
+const art = (n: string) => `${base}img/forest/s1/s1-${n}.webp`;
+const ruleArt = [
+  { n: "02-rule1", alt: "熊用一片銀杏葉蓋住資料夾" },
+  { n: "02-rule2", alt: "兔子拿著放大鏡查一本書" },
+  { n: "02-rule3", alt: "狗坐在小書桌前，用羽毛筆在信上簽名" },
+];
 const day1 = stations.slice(0, 3);
 const day2 = stations.slice(3);
 const askShort = s1.askPrompt.replace("{moment}", "＿＿＿＿＿＿");
@@ -38,14 +43,14 @@ const askShort = s1.askPrompt.replace("{moment}", "＿＿＿＿＿＿");
               </div>
             </div>
           </div>
-          <img class="art" src={img("course-04")} alt="熊、兔子、狗圍著一本大書一起討論" />
+          <img class="art" src={art("01-map")} alt="熊、兔子、狗站在森林小路的起點，路上有六顆踏腳石" />
         </div>
       </section>
 
       <section class="slide" aria-label="第 2 頁">
         <p class="eyebrow">兩天都一樣</p>
         <h2>三條規則</h2>
-        <ol class="rules">{s1.rules.map((r) => <li><b>{r.t}</b><span>{r.d}</span></li>)}</ol>
+        <ol class="rules">{s1.rules.map((r, k) => <li><img class="rule-art" src={art(ruleArt[k].n)} alt={ruleArt[k].alt} /><b>{r.t}</b><span>{r.d}</span></li>)}</ol>
       </section>
 
       <section class="slide" aria-label="第 3 頁">
@@ -56,21 +61,25 @@ const askShort = s1.askPrompt.replace("{moment}", "＿＿＿＿＿＿");
             <ol class="qs">{s1.moments.map((q) => <li>{q}</li>)}</ol>
             <p class="foot-note">寫好之後，圈一個：你真的想知道答案的那一個。</p>
           </div>
-          <img class="art" src={img("rabbit")} alt="撐著一片銀杏葉的兔子" />
+          <img class="art" src={art("03-moments")} alt="兔子坐在樹樁上想事情，頭上有三個空白的思考泡泡" />
         </div>
       </section>
 
       <section class="slide" aria-label="第 4 頁">
-        <p class="eyebrow">25–40 分　示範</p>
-        <h2>讓 AI 追問你，不是替你寫</h2>
-        <div class="split">
-          <div class="win"><span>Claude</span></div>
-          <div class="win"><span>ChatGPT</span></div>
+        <div class="two wide">
+          <div>
+            <p class="eyebrow">25–40 分　示範</p>
+            <h2>讓 AI 追問你，<br />不是替你寫</h2>
+            <p class="lead">Claude、ChatGPT 兩個視窗並排，同一段提示詞丟兩邊。</p>
+            <pre class="prompt">{askShort}</pre>
+          </div>
+          <img class="art" src={art("04-asked")} alt="一隻小綠鳥歪著頭向熊提問，熊在書桌前想著要怎麼回答" />
         </div>
-        <pre class="prompt">{askShort}</pre>
       </section>
 
       <section class="slide" aria-label="第 5 頁">
+        <div class="two wide">
+          <div>
         <p class="eyebrow">40–70 分　實作</p>
         <h2>關掉視窗，四格自己填</h2>
         <div class="grid4">
@@ -80,13 +89,21 @@ const askShort = s1.askPrompt.replace("{moment}", "＿＿＿＿＿＿");
           <div><b>O</b>結果<small>改善什麼？用什麼量？</small></div>
         </div>
         <p class="foot-note">想了解經驗或感受的人用 PICo：對象、想了解的現象、情境。每改一次，舊版本留著。</p>
+          </div>
+          <img class="art" src={art("05-four-cards")} alt="熊在野餐墊上排四張空白卡片，小綠鳥停在遠處的樹枝上" />
+        </div>
       </section>
 
       <section class="slide" aria-label="第 6 頁">
-        <p class="eyebrow">70–80 分　兩人互看</p>
-        <h2>FINER：打勾或打問號</h2>
-        <ul class="finer">{s1.finer.map((f) => <li><b>{f.k}</b><span>{f.name}</span><small>{f.ask}</small></li>)}</ul>
-        <p class="foot-note">問號不是扣分，是下一站要帶去找文獻的東西。</p>
+        <div class="two wide">
+          <div>
+            <p class="eyebrow">70–80 分　兩人互看</p>
+            <h2>FINER：打勾或打問號</h2>
+            <ul class="finer">{s1.finer.map((f) => <li><b>{f.k}</b><span>{f.name}</span><small>{f.ask}</small></li>)}</ul>
+            <p class="foot-note">問號不是扣分，是下一站要帶去找文獻的東西。</p>
+          </div>
+          <img class="art" src={art("06-swap")} alt="兔子和狗坐在長椅上交換筆記本" />
+        </div>
       </section>
 
       <section class="slide" aria-label="第 7 頁">
@@ -97,7 +114,7 @@ const askShort = s1.askPrompt.replace("{moment}", "＿＿＿＿＿＿");
             <p class="big">AI 在這一站幫我的地方是＿＿＿，<br />我自己決定的是＿＿＿。</p>
             <p class="foot-note">下一站：你的 P、I、C、O，每一個都會變成檢索詞。</p>
           </div>
-          <img class="art" src={img("bear-wave")} alt="揮手的熊" />
+          <img class="art" src={art("07-next")} alt="熊、兔子、狗一起走向下一個路標" />
         </div>
       </section>
     </main>
@@ -201,6 +218,36 @@ const askShort = s1.askPrompt.replace("{moment}", "＿＿＿＿＿＿");
         object-fit: contain;
         mix-blend-mode: multiply;
       }
+      .two.wide {
+        grid-template-columns: 1.55fr 1fr;
+        gap: 3vw;
+      }
+      .two.wide h2 {
+        font-size: 1.8em;
+        margin-bottom: 0.4em;
+      }
+      .two.wide .prompt {
+        font-size: 0.62em;
+      }
+      .two.wide .grid4 {
+        gap: 0.6em;
+      }
+      .two.wide .grid4 div {
+        padding: 0.55em 0.8em;
+      }
+      .two.wide .grid4 b {
+        font-size: 1.4em;
+      }
+      .two.wide .finer {
+        font-size: 0.88em;
+        gap: 0.3em;
+      }
+      .two.wide .foot-note {
+        margin-top: 0.7em;
+      }
+      .lead {
+        color: var(--ink-soft);
+      }
       .days {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -247,6 +294,14 @@ const askShort = s1.askPrompt.replace("{moment}", "＿＿＿＿＿＿");
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 2vw;
+      }
+      .rule-art {
+        display: block;
+        height: 26vh;
+        max-width: 100%;
+        object-fit: contain;
+        margin: 0 auto 0.5em;
+        mix-blend-mode: multiply;
       }
       .rules li {
         background: var(--paper);
@@ -297,7 +352,7 @@ const askShort = s1.askPrompt.replace("{moment}", "＿＿＿＿＿＿");
       }
       .grid4 {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         gap: 1.5vw;
       }
       .grid4 div {

@@ -4,6 +4,8 @@
 
 用法（需要 Python 3、numpy、Pillow）：
     python3 scripts/prepare-art.py <原圖資料夾> public/img/forest
+投影插圖（每張都裁到主體）：
+    python3 scripts/prepare-art.py <原圖資料夾> public/img/forest/s1 --trim
 原圖資料夾裡放 hero.png、bear.png、rabbit.png、dog.png、bear-wave.png、dog-wave.png、
 course-01.png ～ course-04.png（檔名對照見 DESIGN.md）。
 """
@@ -11,7 +13,7 @@ import sys, os
 import numpy as np
 from PIL import Image
 
-def whiten(src, dst, max_side, crop=None):
+def whiten(src, dst, max_side, crop=None, trim=False):
     im = Image.open(src).convert("RGB")
     if crop: im = im.crop(crop)
     im.thumbnail((max_side, max_side), Image.LANCZOS)
@@ -30,12 +32,27 @@ def whiten(src, dst, max_side, crop=None):
     edge = np.clip(np.minimum(fy[:, None], fx[None, :]), 0, 1)[..., None]
     out = out * edge + 255.0 * (1 - edge)
     out = np.clip(out, 0, 255).astype(np.uint8)
-    Image.fromarray(out).save(dst, "WEBP", quality=84, method=6)
-    return im.size, os.path.getsize(dst) // 1024, bg.round()
+    img = Image.fromarray(out)
+    if trim:
+        # 裁到主體：找出不是白色的範圍，四周留 5% 白邊
+        ink = (out.min(axis=2) < 236).astype(np.uint8) * 255
+        bb = Image.fromarray(ink, "L").getbbox()
+        if bb:
+            pw, ph = int((bb[2] - bb[0]) * 0.05) + 8, int((bb[3] - bb[1]) * 0.05) + 8
+            img = img.crop((max(0, bb[0] - pw), max(0, bb[1] - ph), min(w, bb[2] + pw), min(h, bb[3] + ph)))
+    img.save(dst, "WEBP", quality=84, method=6)
+    return img.size, os.path.getsize(dst) // 1024, bg.round()
 
 if __name__ == "__main__":
     s, o = sys.argv[1], sys.argv[2]
     os.makedirs(o, exist_ok=True)
+    if "--trim" in sys.argv:
+        # 投影用插圖：資料夾裡每一張 PNG 都校正、裁到主體、長邊縮到 1400px
+        for name in sorted(os.listdir(s)):
+            if name.lower().endswith(".png"):
+                stem = os.path.splitext(name)[0]
+                print(stem, whiten(os.path.join(s, name), os.path.join(o, stem + ".webp"), 1400, trim=True))
+        sys.exit(0)
     jobs = {
         "hero": (1800, (0, 300, 2048, 1536)),
         "bear": (720, None), "rabbit": (720, None), "dog": (720, None),
