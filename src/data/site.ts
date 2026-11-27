@@ -9,8 +9,8 @@ export const site = {
   description:
     "Bob Yu 的學習網站：給護理人的 AI 課程、研究筆記課、文獻工具與 Claude Skills，全部放在同一片森林裡。",
   lang: "zh-Hant-TW",
-  // 首頁插畫上方那一行弧形英文
-  motto: "Slow paths, small lights, one leaf at a time.",
+  // 首頁插畫上方那一行弧形標語
+  motto: "慢慢走，有一點光，一次撿一片葉子。",
 };
 
 export const contact = {
