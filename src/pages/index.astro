@@ -2,8 +2,8 @@
 import Base from "../layouts/Base.astro";
 import HeroArt from "../components/HeroArt.astro";
 import Leaf from "../components/Leaf.astro";
-import Icon from "../components/Icon.astro";
-import { about, contact, openCourses, paths, tools } from "../data/site";
+import Animal from "../components/Animal.astro";
+import { about, cast, contact, openCourses, paths, tools } from "../data/site";
 import { courses } from "../data/courses";
 
 const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
@@ -60,7 +60,7 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.sub
                   <span class="tag">{c.status}</span>
                 </span>
                 <span class="ic">
-                  <Icon name={c.icon} />
+                  <Animal kind={c.guide.kind} prop={c.guide.prop} size={c.guide.kind === "team" ? "5.6rem" : "3.8rem"} />
                 </span>
               </a>
             </li>
@@ -73,10 +73,16 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.sub
   <!-- 從哪裡開始 -->
   <section class="section start" id="start">
     <div class="wrap">
-      <div class="section-head reveal">
-        <p class="eyebrow">Chapter 2 · Where to Begin</p>
-        <h2>不知道從哪裡開始？</h2>
-        <p>挑一句最像你的話，照著小路走。</p>
+      <div class="start-head reveal">
+        <div class="section-head">
+          <p class="eyebrow">Chapter 2 · Where to Begin</p>
+          <h2>不知道從哪裡開始？</h2>
+          <p>挑一句最像你的話，照著小路走。</p>
+        </div>
+        <div class="guide">
+          <p class="bubble">跟我走，<br />我帶你去！</p>
+          <Animal kind="rabbit" prop="leaf" size="7.5rem" label="引路員兔子，撐著一片銀杏葉" />
+        </div>
       </div>
       <div class="paths">
         {
@@ -152,17 +158,7 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.sub
   <!-- 關於 -->
   <section class="section" id="about">
     <div class="wrap about card reveal">
-      <svg class="about-owl" viewBox="-50 -60 100 140" aria-hidden="true">
-        <path d="M-34 20 C-38 -16 -24 -40 0 -40 C24 -40 38 -16 34 20 C30 56 18 68 0 68 C-18 68 -30 56 -34 20 Z" fill="#8a643f"></path>
-        <path d="M-30 -30 L-26 -52 L-12 -38 Z M30 -30 L26 -52 L12 -38 Z" fill="#8a643f"></path>
-        <ellipse cx="0" cy="34" rx="22" ry="28" fill="#ead6ad"></ellipse>
-        <circle cx="-13" cy="-14" r="13" fill="#fbf5e6" stroke="#5e4128" stroke-width="2"></circle>
-        <circle cx="13" cy="-14" r="13" fill="#fbf5e6" stroke="#5e4128" stroke-width="2"></circle>
-        <circle cx="-12" cy="-13" r="5.5" fill="#2a1c12"></circle>
-        <circle cx="14" cy="-13" r="5.5" fill="#2a1c12"></circle>
-        <path d="M-4 -4 L4 -4 L0 4 Z" fill="#d8932c"></path>
-        <path d="M-30 6 C-12 16 12 16 30 6 L30 14 C12 24 -12 24 -30 14 Z" fill="#3f6b4d"></path>
-      </svg>
+      <Animal kind="bear" prop="book" size="8rem" class="about-pic" label="森林的主人：一隻正在讀書的熊" />
       <div>
         <p class="eyebrow">About</p>
         <h2>{about.heading}</h2>
@@ -172,6 +168,26 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.sub
           <a class="btn btn-quiet" href="https://github.com/bobyu89" rel="noopener">GitHub</a>
         </p>
       </div>
+    </div>
+
+    <div class="wrap cast">
+      <h2 class="cast-h reveal">森林裡住著三位</h2>
+      <ul>
+        {
+          cast.map((c, i) => (
+            <li class="card reveal" style={`transition-delay:${i * 80}ms`}>
+              <Animal kind={c.kind} prop={c.prop} size="6.5rem" />
+              <div>
+                <h3>
+                  {c.name}
+                  <small>{c.role}</small>
+                </h3>
+                <p>{c.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
     </div>
   </section>
 </Base>
@@ -440,9 +456,89 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.sub
       grid-template-columns: 9rem 1fr;
     }
   }
-  .about-owl {
-    width: 7rem;
+  .about :global(.about-pic) {
     margin-inline: auto;
+  }
+  @media (min-width: 44rem) {
+    .about {
+      grid-template-columns: 10rem 1fr;
+    }
+  }
+
+  /* 兔子引路 */
+  .start-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 0 1.5rem;
+  }
+  .guide {
+    display: flex;
+    align-items: end;
+    gap: 0.2rem;
+    margin-bottom: 1.2rem;
+  }
+  .bubble {
+    position: relative;
+    margin: 0 0 4.5rem;
+    padding: 0.5rem 0.9rem;
+    background: var(--paper);
+    border: 2px solid var(--line);
+    border-radius: 16px;
+    font-size: 0.98rem;
+    line-height: 1.4;
+  }
+  .bubble::after {
+    content: "";
+    position: absolute;
+    right: -10px;
+    bottom: 12px;
+    border: 8px solid transparent;
+    border-left-color: var(--line);
+  }
+
+  /* 森林住民 */
+  .cast {
+    margin-top: 2.5rem;
+  }
+  .cast-h {
+    font-size: clamp(1.4rem, 3vw, 1.8rem);
+  }
+  .cast ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1.2rem;
+  }
+  @media (min-width: 52rem) {
+    .cast ul {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .cast li {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 1rem 1.2rem;
+  }
+  .cast :global(.animal) {
+    flex: none;
+  }
+  .cast h3 {
+    font-size: 1.3rem;
+    margin: 0 0 0.2rem;
+  }
+  .cast h3 small {
+    margin-left: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--rust);
+  }
+  .cast p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.98rem;
   }
   .about h2 {
     font-size: clamp(1.6rem, 3.5vw, 2.2rem);

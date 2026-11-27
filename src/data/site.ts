@@ -24,6 +24,13 @@ export const contact = {
   ],
 };
 
+/** 森林住民 */
+export const cast = [
+  { kind: "bear", prop: "book", name: "熊", role: "森林的主人", text: "最愛在銀杏樹下讀書。研究、文獻、寫作的事，問牠就對了。" },
+  { kind: "rabbit", prop: "leaf", name: "兔子", role: "引路員", text: "撐著一片銀杏葉站在路標旁，替第一次來的人指路。" },
+  { kind: "dog", prop: "letter", name: "狗", role: "送信員", text: "叼著信跑來跑去。想合作、想問問題，就交給牠送。" },
+] as const;
+
 export const about = {
   heading: "森林的主人",
   body: [

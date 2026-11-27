@@ -1,11 +1,15 @@
 ---
 import { contact, site } from "../data/site";
+import Animal from "./Animal.astro";
 const links = contact.links.filter((l) => l.href);
 const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.subject)}`;
 const year = new Date().getFullYear();
 ---
 
 <footer class="foot">
+  <a class="postdog" href={mailto} aria-label="送信員小狗：寫信給我">
+    <Animal kind="dog" prop="letter" size="5rem" />
+  </a>
   <svg class="ground" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true">
     <path d="M0 60 V30 C150 0 300 10 450 24 C620 40 760 6 920 14 C1040 20 1120 34 1200 26 V60 Z" fill="#3f6b4d"></path>
     <path d="M0 60 V44 C200 30 380 40 600 46 C820 52 1000 36 1200 42 V60 Z" fill="#2d5240"></path>
@@ -32,8 +36,18 @@ const year = new Date().getFullYear();
 
 <style>
   .foot {
-    margin-top: 3rem;
+    position: relative;
+    margin-top: 5rem;
     color: #f1e2bf;
+  }
+  .postdog {
+    position: absolute;
+    left: max(1rem, calc(50% - 34rem));
+    top: -3.6rem;
+    transition: translate 0.2s;
+  }
+  .postdog:hover {
+    translate: 0 -6px;
   }
   .ground {
     display: block;
