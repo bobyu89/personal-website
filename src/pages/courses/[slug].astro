@@ -1,0 +1,447 @@
+---
+import Base from "../../layouts/Base.astro";
+import Leaf from "../../components/Leaf.astro";
+import Icon from "../../components/Icon.astro";
+import { courses, type Course } from "../../data/courses";
+
+export function getStaticPaths() {
+  return courses.map((c, i) => ({ params: { slug: c.slug }, props: { c, i } }));
+}
+interface Props {
+  c: Course;
+  i: number;
+}
+const { c, i } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const prev = courses[i - 1];
+const next = courses[i + 1];
+---
+
+<Base title={`${c.no}　${c.title}｜Bob 的學習森林`} description={`${c.title}：${c.sub}。${c.lede}`} current="new">
+  <div class="wrap">
+    <p class="crumb"><a href={`${base}#new`}>← 回森林地圖</a></p>
+
+    <header class="head">
+      <div class="badge">
+        <Leaf tone={c.tone} size="6rem" rotate={-12} />
+        <b>{c.no}</b>
+      </div>
+      <div>
+        <span class="tag">{c.status}</span>
+        <h1>{c.title}</h1>
+        <p class="sub">{c.sub}</p>
+        <p class="lede">{c.lede}</p>
+      </div>
+      <div class="icon"><Icon name={c.icon} size="5.5rem" /></div>
+    </header>
+
+    <section class="facts">
+      <div class="card fact reveal">
+        <h2>適合誰</h2>
+        <ul>{c.forWho.map((t) => <li>{t}</li>)}</ul>
+      </div>
+      <div class="card fact reveal">
+        <h2>上完帶走</h2>
+        <ul>{c.takeaway.map((t) => <li>{t}</li>)}</ul>
+      </div>
+      <div class="card fact reveal">
+        <h2>怎麼上</h2>
+        <p>{c.format}</p>
+        <h2 class="mt">森林裡會用到</h2>
+        <ul class="uses">
+          {
+            c.uses.map((u) => (
+              <li>
+                <a href={u.href} rel="noopener">
+                  {u.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section class="route" data-route data-key={`forest-v1:${c.slug}`}>
+      <div class="route-head">
+        <div>
+          <p class="eyebrow">The Route</p>
+          <h2>一路上的 {c.modules.length} 站</h2>
+          <p class="hint">走完一站，就把那片葉子撿起來。進度只存在你這台電腦的瀏覽器。</p>
+        </div>
+        <div class="basket" aria-live="polite">
+          <span class="leaves" data-leaves>
+            {c.modules.map(() => <Leaf tone={c.tone} size="1.6rem" />)}
+          </span>
+          <span data-count>還沒撿葉子</span>
+        </div>
+      </div>
+
+      <ol class="stops">
+        {
+          c.modules.map((m, k) => (
+            <li class="stop reveal">
+              <span class="dot" aria-hidden="true">
+                {k + 1}
+              </span>
+              <article class="card">
+                <h3>{m.title}</h3>
+                <p class="goal">{m.goal}</p>
+                <ul>
+                  {m.steps.map((s) => (
+                    <li>{s}</li>
+                  ))}
+                </ul>
+                <p class="out">
+                  <b>這一站帶走</b>
+                  {m.output}
+                </p>
+                <label class="pick">
+                  <input type="checkbox" data-pick={k} />
+                  <span>撿起這片葉子</span>
+                </label>
+              </article>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <aside class="caution card reveal">
+      <h2>走之前先看</h2>
+      <p>{c.caution}</p>
+    </aside>
+
+    <section class="refs reveal">
+      <h2>參考資料</h2>
+      <ul>
+        {
+          c.refs.map((r) => (
+            <li>
+              {r.text}
+              {r.href && (
+                <>
+                  {" "}
+                  <a href={r.href} rel="noopener">
+                    {r.href.replace(/^https?:\/\//, "")}
+                  </a>
+                </>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <nav class="pager" aria-label="其他新課">
+      {
+        prev ? (
+          <a class="card" href={`${base}courses/${prev.slug}/`}>
+            <small>← 上一門</small>
+            {prev.no}　{prev.title}
+          </a>
+        ) : (
+          <span />
+        )
+      }
+      {
+        next ? (
+          <a class="card next" href={`${base}courses/${next.slug}/`}>
+            <small>下一門 →</small>
+            {next.no}　{next.title}
+          </a>
+        ) : (
+          <a class="card next" href={`${base}#open`}>
+            <small>接下來 →</small>
+            看開過的課
+          </a>
+        )
+      }
+    </nav>
+  </div>
+</Base>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-route]").forEach((route) => {
+    const key = route.dataset.key!;
+    let done: number[] = [];
+    try {
+      done = JSON.parse(localStorage.getItem(key) || "[]");
+      if (!Array.isArray(done)) done = [];
+    } catch {
+      done = [];
+    }
+    const boxes = Array.from(route.querySelectorAll<HTMLInputElement>("[data-pick]"));
+    const leaves = Array.from(route.querySelectorAll<SVGElement>("[data-leaves] .leaf"));
+    const count = route.querySelector<HTMLElement>("[data-count]")!;
+    const sync = () => {
+      const n = boxes.filter((b) => b.checked).length;
+      leaves.forEach((l, k) => l.classList.toggle("got", k < n));
+      boxes.forEach((b) => b.closest(".stop")?.classList.toggle("is-done", b.checked));
+      count.textContent =
+        n === 0 ? "還沒撿葉子" : n === boxes.length ? `${n} 片全撿齊了，這條路走完了！` : `撿了 ${n} / ${boxes.length} 片`;
+    };
+    boxes.forEach((b) => {
+      b.checked = done.includes(+b.dataset.pick!);
+      b.addEventListener("change", () => {
+        done = boxes.filter((x) => x.checked).map((x) => +x.dataset.pick!);
+        try {
+          localStorage.setItem(key, JSON.stringify(done));
+        } catch {}
+        sync();
+      });
+    });
+    sync();
+  });
+</script>
+
+<style>
+  .crumb {
+    margin: 1.4rem 0 0.6rem;
+  }
+  .head {
+    display: grid;
+    gap: 1rem 1.6rem;
+    align-items: start;
+    padding-block: 1rem 2rem;
+  }
+  @media (min-width: 46rem) {
+    .head {
+      grid-template-columns: auto 1fr auto;
+    }
+  }
+  .badge {
+    position: relative;
+    width: 6rem;
+    height: 6rem;
+  }
+  .badge :global(.leaf) {
+    display: block;
+  }
+  .badge b {
+    position: absolute;
+    inset: 27% 0 auto;
+    line-height: 1;
+    text-align: center;
+    font-family: var(--display);
+    font-size: 1.6rem;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    margin: 0.5rem 0 0.2rem;
+  }
+  .sub {
+    color: var(--rust);
+    font-size: 1.15rem;
+  }
+  .lede {
+    max-width: 44rem;
+    font-size: 1.12rem;
+  }
+  .icon {
+    display: none;
+  }
+  @media (min-width: 46rem) {
+    .icon {
+      display: block;
+    }
+  }
+
+  .facts {
+    display: grid;
+    gap: 1.2rem;
+  }
+  @media (min-width: 52rem) {
+    .facts {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .fact {
+    padding: 1.2rem 1.4rem;
+  }
+  .fact h2 {
+    font-size: 1.1rem;
+    color: var(--moss-deep);
+    margin-bottom: 0.4rem;
+  }
+  .fact .mt {
+    margin-top: 1rem;
+  }
+  .fact ul {
+    margin: 0;
+    padding-left: 1.2rem;
+  }
+  .fact p {
+    margin: 0;
+  }
+
+  .route {
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+  }
+  .route-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .route-head h2 {
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+  }
+  .hint {
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  .basket {
+    display: grid;
+    gap: 0.3rem;
+    justify-items: end;
+    font-weight: 700;
+    color: var(--moss-deep);
+  }
+  .leaves {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem;
+  }
+  .leaves :global(.leaf) {
+    filter: grayscale(1) opacity(0.35);
+    transition:
+      filter 0.4s,
+      transform 0.4s;
+  }
+  .leaves :global(.leaf.got) {
+    filter: none;
+    transform: rotate(-12deg) scale(1.1) !important;
+  }
+
+  .stops {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+  .stops::before {
+    content: "";
+    position: absolute;
+    left: 1.2rem;
+    top: 1rem;
+    bottom: 1rem;
+    border-left: 4px dashed var(--line);
+  }
+  .stop {
+    position: relative;
+    padding-left: 3.6rem;
+    margin-bottom: 1.2rem;
+  }
+  .dot {
+    position: absolute;
+    left: 0;
+    top: 1rem;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-family: var(--display);
+    background: var(--paper);
+    border: 3px solid var(--ginkgo-deep);
+    transition: background 0.3s;
+  }
+  .stop.is-done .dot {
+    background: var(--ginkgo);
+  }
+  .stop .card {
+    padding: 1.2rem 1.4rem;
+  }
+  .stop h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.2rem;
+  }
+  .goal {
+    color: var(--ink-soft);
+  }
+  .stop ul {
+    margin: 0 0 0.8rem;
+    padding-left: 1.2rem;
+  }
+  .out {
+    background: #f3cf6340;
+    border-left: 4px solid var(--ginkgo);
+    padding: 0.45rem 0.8rem;
+    border-radius: 0 10px 10px 0;
+    margin-bottom: 0.7rem;
+  }
+  .out b {
+    color: var(--rust-deep);
+    margin-right: 0.6rem;
+  }
+  .pick {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--moss-deep);
+  }
+  .pick input {
+    width: 1.2rem;
+    height: 1.2rem;
+    accent-color: var(--moss);
+  }
+  .stop.is-done .card {
+    background: #f6ecd0;
+  }
+
+  .caution {
+    margin-top: 2rem;
+    padding: 1.2rem 1.4rem;
+    border-color: var(--rust);
+    border-style: dashed;
+  }
+  .caution h2 {
+    font-size: 1.1rem;
+    color: var(--rust-deep);
+  }
+  .caution p {
+    margin: 0;
+  }
+  .refs {
+    margin-top: 2rem;
+    font-size: 0.92rem;
+  }
+  .refs h2 {
+    font-size: 1.1rem;
+  }
+  .refs ul {
+    padding-left: 1.2rem;
+  }
+  .refs li {
+    margin-bottom: 0.4rem;
+    overflow-wrap: anywhere;
+  }
+  .pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+  .pager a {
+    display: grid;
+    padding: 0.9rem 1.1rem;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 700;
+  }
+  .pager a:hover {
+    color: var(--rust-deep);
+  }
+  .pager small {
+    font-weight: 400;
+    color: var(--ink-soft);
+  }
+  .pager .next {
+    text-align: right;
+  }
+</style>

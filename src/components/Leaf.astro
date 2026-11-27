@@ -1,0 +1,32 @@
+---
+/** 一片銀杏葉。tone 決定顏色，size 決定寬度。 */
+interface Props {
+  tone?: "ginkgo" | "rust" | "moss" | "amber";
+  size?: string;
+  class?: string;
+  rotate?: number;
+}
+const { tone = "ginkgo", size = "2.5rem", class: cls = "", rotate = 0 } = Astro.props;
+const fill = { ginkgo: "#e8b53d", rust: "#c4643a", moss: "#7a9654", amber: "#dc9d3f" }[tone];
+const edge = { ginkgo: "#b98418", rust: "#8f4322", moss: "#4f6c36", amber: "#a66d1c" }[tone];
+---
+
+<svg
+  class={`leaf ${cls}`}
+  viewBox="0 0 100 100"
+  width={size}
+  style={`width:${size};height:auto;transform:rotate(${rotate}deg)`}
+  aria-hidden="true"
+>
+  <path d="M50 96 C51 86 50 74 50 62" stroke={edge} stroke-width="3.2" fill="none" stroke-linecap="round"></path>
+  <path
+    d="M50 64 C33 63 10 50 5 25 C20 9 38 8 46 17 L50 30 L54 17 C62 8 80 9 95 25 C90 50 67 63 50 64 Z"
+    fill={fill}
+    stroke={edge}
+    stroke-width="2.4"
+    stroke-linejoin="round"></path>
+  <g stroke={edge} stroke-width="1.1" opacity=".45" fill="none">
+    <path d="M50 62 L22 24"></path><path d="M50 62 L34 18"></path><path d="M50 62 L44 22"></path>
+    <path d="M50 62 L78 24"></path><path d="M50 62 L66 18"></path><path d="M50 62 L56 22"></path>
+  </g>
+</svg>

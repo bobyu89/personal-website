@@ -1,211 +1,450 @@
 ---
 import Base from "../layouts/Base.astro";
-import Nav from "../components/Nav.astro";
-import Hero from "../components/Hero.astro";
-import Chapter from "../components/Chapter.astro";
-import Entries from "../components/Entries.astro";
-import Arrow from "../components/Arrow.astro";
-import { clinical, closing, contact, creative, research, sampleItems, site, tech } from "../data/profile";
+import HeroArt from "../components/HeroArt.astro";
+import Leaf from "../components/Leaf.astro";
+import Icon from "../components/Icon.astro";
+import { about, contact, openCourses, paths, tools } from "../data/site";
+import { courses } from "../data/courses";
 
-if (import.meta.env.PROD && sampleItems.length) {
-  console.warn(
-    `\n[profile] 還有 ${sampleItems.length} 個示意項目沒處理（src/data/profile.ts 裡的 sample: true）：\n  - ${sampleItems.join("\n  - ")}\n`,
-  );
-}
-
-const mailto = contact.email ? `mailto:${contact.email}?subject=${encodeURIComponent(contact.subject)}` : undefined;
-const links = contact.links.filter((link) => link.href);
-const scholarLinks = links.filter((link) => ["ORCID", "Google Scholar"].includes(link.label));
-const year = new Date().getFullYear();
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const href = (h: string) => (/^https?:/.test(h) ? h : base + h);
+const ext = (h: string) => /^https?:/.test(h);
+const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.subject)}`;
 ---
 
 <Base>
-  <Nav />
-  <Hero />
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-text">
+        <p class="eyebrow">Welcome to the Learning Forest</p>
+        <h1>歡迎來到，<br /><span class="hl">Bob 的學習森林</span>。</h1>
+        <p class="lede">
+          給護理人的 AI 課、研究筆記課、文獻工具和 Claude Skills，都種在這片森林裡。不用一次走完，一次撿一片葉子就好。
+        </p>
+        <p class="actions">
+          <a class="btn btn-primary" href="#new">看四門新課</a>
+          <a class="btn btn-quiet" href="#start">不知道從哪開始？</a>
+        </p>
+        <ul class="counts" aria-label="森林裡有什麼">
+          <li><b>{courses.length}</b>門新課</li>
+          <li><b>{openCourses.length}</b>門開過的課</li>
+          <li><b>{tools.length}</b>個工具與 Skill</li>
+        </ul>
+      </div>
+      <div class="hero-pic">
+        <HeroArt />
+      </div>
+    </div>
+  </section>
 
-  <main id="main">
-    <Chapter id="research" title="研究" label="Research" viz="research" statement={research.statement}>
-      <p class="body reveal">{research.body}</p>
-      <Entries class="reveal" title={research.listTitle} items={research.items} />
-      <div class="pubs reveal">
+  <!-- 四門新課：目錄式清單 -->
+  <section class="section" id="new">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Chapter 1 · New Paths</p>
+        <h2>森林地圖：四門新課</h2>
+        <p>正在準備的四門課，大綱先公開。每一門都用護理與研究的真實情境來教，課裡用到的工具，森林裡都找得到。</p>
+      </div>
+      <ol class="toc">
         {
-          research.publications.length ? (
-            <Entries title="著作" items={research.publications} />
-          ) : (
-            <>
-              <h3 class="list-title">著作</h3>
-              <p class="small">
-                著作清單整理中。
-                {scholarLinks.length > 0 && (
-                  <>
-                    完整列表請見
-                    {scholarLinks.map((link, i) => (
-                      <>
-                        {i > 0 && "、"}
-                        <a href={link.href} rel="noopener">
-                          {link.label}
-                        </a>
-                      </>
-                    ))}
-                    。
-                  </>
-                )}
-              </p>
-            </>
-          )
+          courses.map((c, i) => (
+            <li class="reveal" style={`transition-delay:${i * 80}ms`}>
+              <a href={`${base}courses/${c.slug}/`}>
+                <span class="no">
+                  <Leaf tone={c.tone} size="3.4rem" rotate={i % 2 ? 14 : -14} />
+                  <b>{c.no}</b>
+                </span>
+                <span class="tt">
+                  <strong>{c.title}</strong>
+                  <small>{c.sub}</small>
+                  <span class="tag">{c.status}</span>
+                </span>
+                <span class="ic">
+                  <Icon name={c.icon} />
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- 從哪裡開始 -->
+  <section class="section start" id="start">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Chapter 2 · Where to Begin</p>
+        <h2>不知道從哪裡開始？</h2>
+        <p>挑一句最像你的話，照著小路走。</p>
+      </div>
+      <div class="paths">
+        {
+          paths.map((p, i) => (
+            <article class="card path reveal" style={`transition-delay:${i * 80}ms`}>
+              <h3>「{p.who}」</h3>
+              <ol>
+                {p.steps.map((s) => (
+                  <li>
+                    <a href={href(s.href)} rel={ext(s.href) ? "noopener" : undefined}>
+                      {s.label}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </article>
+          ))
         }
       </div>
-    </Chapter>
+    </div>
+  </section>
 
-    <Chapter id="clinical" title="臨床" label="Clinical" viz="clinical" flip statement={clinical.statement}>
-      <p class="body reveal">{clinical.body}</p>
-      <Entries class="reveal" title={clinical.listTitle} items={clinical.items} />
-    </Chapter>
-
-    <Chapter id="tech" title="技術" label="Tech" viz="tech" statement={tech.statement}>
-      <p class="body reveal">{tech.body}</p>
-      <Entries class="reveal" title={tech.listTitle} items={tech.items} />
-    </Chapter>
-
-    <Chapter id="creative" title="創作" label="Creative" viz="creative" flip statement={creative.statement}>
-      <p class="body reveal">{creative.body}</p>
-      <Entries class="reveal" title={creative.listTitle} items={creative.items} />
-    </Chapter>
-
-    <Chapter id="contact" title={closing.heading} label="Contact" statement={closing.statement} class="contact">
-      <div class="wrap contact__body" data-reveal>
-        <div class="panel contact__card reveal">
-          {
-            mailto ? (
-              <a class="contact__email" href={mailto}>
-                {contact.email}
-                <Arrow />
-              </a>
-            ) : (
-              <p class="contact__email">聯絡信箱即將公開。</p>
-            )
-          }
-          <div class="contact__row">
-            {mailto && (
-              <a class="btn" href={mailto}>
-                寄信給我
-                <Arrow />
-              </a>
-            )}
-            {links.map((link) => (
-              <a class="btn btn--ghost" href={link.href} rel="noopener">
-                {link.label}
-              </a>
-            ))}
-          </div>
-        </div>
+  <!-- 開過的課 -->
+  <section class="section" id="open">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Chapter 3 · Courses I've Taught</p>
+        <h2>開過的課</h2>
+        <p>已經上線的課程網站，教材、簡報、學習單都在裡面，可以自己走一遍。</p>
       </div>
-    </Chapter>
-  </main>
+      <div class="grid">
+        {
+          openCourses.map((c, i) => (
+            <a class="card item reveal" href={c.href} rel="noopener" style={`transition-delay:${i * 60}ms`}>
+              <Leaf tone={c.tone} size="2.4rem" rotate={20} class="corner" />
+              <span class="tag">{c.tag}</span>
+              <h3>{c.title}</h3>
+              <p class="sub">{c.sub}</p>
+              <p>{c.text}</p>
+              <span class="go">走進去 ↗</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
 
-  <footer class="footer wrap">
-    <p class="small">© {year} {site.name}</p>
-    <p class="small">以 Astro 建置 · 首屏粒子以 Canvas 即時繪製</p>
-    <a class="small footer__top" href="#top">回到頂端 ↑</a>
-  </footer>
+  <!-- 工具與 Skill -->
+  <section class="section" id="tools">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Chapter 4 · Tools & Skills</p>
+        <h2>工具與 Skill</h2>
+        <p>為自己和同學寫的工具。重複的事交給程式，判斷留給人。</p>
+      </div>
+      <div class="grid tools">
+        {
+          tools.map((t, i) => (
+            <a class="card item reveal" href={t.href} rel="noopener" style={`transition-delay:${i * 60}ms`}>
+              <Leaf tone={t.tone} size="2.2rem" rotate={-24} class="corner" />
+              <span class="tag">{t.tag}</span>
+              <h3>{t.title}</h3>
+              <p class="sub">{t.sub}</p>
+              <p>{t.text}</p>
+              <span class="go">{t.href.includes("github.com") ? "看原始碼 ↗" : "打開 ↗"}</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 關於 -->
+  <section class="section" id="about">
+    <div class="wrap about card reveal">
+      <svg class="about-owl" viewBox="-50 -60 100 140" aria-hidden="true">
+        <path d="M-34 20 C-38 -16 -24 -40 0 -40 C24 -40 38 -16 34 20 C30 56 18 68 0 68 C-18 68 -30 56 -34 20 Z" fill="#8a643f"></path>
+        <path d="M-30 -30 L-26 -52 L-12 -38 Z M30 -30 L26 -52 L12 -38 Z" fill="#8a643f"></path>
+        <ellipse cx="0" cy="34" rx="22" ry="28" fill="#ead6ad"></ellipse>
+        <circle cx="-13" cy="-14" r="13" fill="#fbf5e6" stroke="#5e4128" stroke-width="2"></circle>
+        <circle cx="13" cy="-14" r="13" fill="#fbf5e6" stroke="#5e4128" stroke-width="2"></circle>
+        <circle cx="-12" cy="-13" r="5.5" fill="#2a1c12"></circle>
+        <circle cx="14" cy="-13" r="5.5" fill="#2a1c12"></circle>
+        <path d="M-4 -4 L4 -4 L0 4 Z" fill="#d8932c"></path>
+        <path d="M-30 6 C-12 16 12 16 30 6 L30 14 C12 24 -12 24 -30 14 Z" fill="#3f6b4d"></path>
+      </svg>
+      <div>
+        <p class="eyebrow">About</p>
+        <h2>{about.heading}</h2>
+        {about.body.map((t) => <p>{t}</p>)}
+        <p class="actions">
+          <a class="btn btn-primary" href={mailto}>寫信給我</a>
+          <a class="btn btn-quiet" href="https://github.com/bobyu89" rel="noopener">GitHub</a>
+        </p>
+      </div>
+    </div>
+  </section>
 </Base>
 
-<style is:global>
-  .pubs {
+<style>
+  .hero {
+    padding-block: clamp(1.5rem, 5vw, 3.5rem) 1rem;
+  }
+  .hero-grid {
     display: grid;
-    gap: 12px;
+    gap: 1rem;
+    align-items: center;
+  }
+  @media (min-width: 56rem) {
+    .hero-grid {
+      grid-template-columns: 1fr 1.05fr;
+      gap: 2.5rem;
+    }
+  }
+  h1 {
+    font-size: clamp(2.2rem, 6vw, 3.8rem);
+    line-height: 1.25;
+  }
+  .hl {
+    background: linear-gradient(transparent 62%, #f3cf6399 62%);
+  }
+  .lede {
+    font-size: 1.18rem;
+    color: var(--ink-soft);
+    max-width: 32rem;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin: 1.4rem 0;
+  }
+  .counts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.4rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: var(--ink-soft);
+  }
+  .counts b {
+    font-family: var(--display);
+    font-size: 1.6rem;
+    color: var(--rust);
+    margin-right: 0.25rem;
+  }
+  .hero-pic {
+    max-width: 38rem;
+    margin-inline: auto;
+    width: 100%;
   }
 
-  .contact__card {
+  /* 目錄式清單 */
+  .toc {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: grid;
-    gap: 32px;
-    padding: clamp(28px, 4vw, 56px);
+    gap: 0 3rem;
+  }
+  @media (min-width: 52rem) {
+    .toc {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .toc a {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 1.2rem 0.6rem;
+    border-bottom: 2px dashed var(--line);
+    color: var(--ink);
+    text-decoration: none;
+    border-radius: 12px;
+    transition: background 0.2s;
+  }
+  .toc a:hover {
+    background: #fbf4e2aa;
+  }
+  .toc a:hover :global(.leaf) {
+    animation: wiggle 0.6s ease;
+  }
+  @keyframes wiggle {
+    30% {
+      rotate: 14deg;
+    }
+    70% {
+      rotate: -8deg;
+    }
+  }
+  .no {
+    position: relative;
+    display: block;
+    width: 3.4rem;
+    height: 3.4rem;
+  }
+  .no :global(.leaf) {
+    display: block;
+  }
+  .no b {
+    position: absolute;
+    inset: 27% 0 auto;
+    line-height: 1;
+    text-align: center;
+    font-family: var(--display);
+    font-size: 1.05rem;
+    color: var(--ink);
+  }
+  .tt {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .tt strong {
+    font-size: 1.3rem;
+    line-height: 1.35;
+  }
+  .tt small {
+    color: var(--ink-soft);
+    font-size: 0.98rem;
+  }
+  .tt .tag {
+    justify-self: start;
+    margin-top: 0.3rem;
+  }
+  @media (max-width: 30rem) {
+    .ic {
+      display: none;
+    }
+    .toc a {
+      grid-template-columns: auto 1fr;
+    }
   }
 
-  /* 卡片後方一團多色微光，四個模式的顏色都在 */
-  .contact__card::before {
+  /* 從哪裡開始 */
+  .start {
+    background: linear-gradient(transparent, #e9d4a466 20%, #e9d4a466 80%, transparent);
+  }
+  .paths {
+    display: grid;
+    gap: 1.25rem;
+  }
+  @media (min-width: 52rem) {
+    .paths {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .path {
+    padding: 1.4rem 1.4rem 1.2rem;
+  }
+  .path h3 {
+    font-size: 1.2rem;
+    color: var(--moss-deep);
+  }
+  .path ol {
+    list-style: none;
+    counter-reset: s;
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+  .path ol::before {
     content: "";
     position: absolute;
-    inset: -40% -10% auto auto;
-    width: 60%;
-    aspect-ratio: 1;
+    left: 0.85rem;
+    top: 0.8rem;
+    bottom: 0.8rem;
+    border-left: 3px dotted var(--line);
+  }
+  .path li {
+    counter-increment: s;
+    position: relative;
+    padding: 0.35rem 0 0.35rem 2.6rem;
+  }
+  .path li::before {
+    content: counter(s);
+    position: absolute;
+    left: 0;
+    top: 0.35rem;
+    width: 1.8rem;
+    height: 1.8rem;
     border-radius: 50%;
-    background: radial-gradient(closest-side, rgb(96 140 255 / 0.18), transparent);
-    pointer-events: none;
+    display: grid;
+    place-items: center;
+    background: var(--ginkgo);
+    border: 2px solid var(--ginkgo-deep);
+    font-family: var(--display);
+    font-size: 0.9rem;
   }
 
-  .contact__email {
+  /* 卡片格 */
+  .grid {
+    display: grid;
+    gap: 1.25rem;
+  }
+  @media (min-width: 40rem) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 64rem) {
+    .grid.tools {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .item {
     position: relative;
-    display: inline-flex;
+    display: flex;
+    flex-direction: column;
+    padding: 1.4rem 1.4rem 1.1rem;
+    color: var(--ink);
+    text-decoration: none;
+    transition:
+      transform 0.2s,
+      box-shadow 0.2s,
+      opacity 0.7s ease,
+      translate 0.7s ease;
+  }
+  .item:hover {
+    color: var(--ink);
+    transform: translateY(-4px) rotate(-0.4deg);
+    box-shadow: 0 16px 28px -16px #6e4a2c88;
+  }
+  .item :global(.corner) {
+    position: absolute;
+    top: -0.9rem;
+    right: 1rem;
+  }
+  .item .tag {
+    align-self: flex-start;
+  }
+  .item h3 {
+    font-size: 1.3rem;
+    margin: 0.5rem 0 0.1rem;
+  }
+  .item .sub {
+    color: var(--rust);
+    font-size: 0.95rem;
+    margin-bottom: 0.6rem;
+  }
+  .item p:not(.sub) {
+    color: var(--ink-soft);
+    font-size: 0.98rem;
+    flex: 1;
+  }
+  .go {
+    font-weight: 700;
+    color: var(--moss);
+  }
+
+  /* 關於 */
+  .about {
+    display: grid;
+    gap: 1rem 2rem;
     align-items: center;
-    gap: 0.4em;
-    width: fit-content;
-    font-size: clamp(22px, 0.6rem + 3.6vw, 64px);
-    font-weight: 600;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
-    text-decoration: none;
-    overflow-wrap: break-word;
+    padding: clamp(1.4rem, 4vw, 2.6rem);
   }
-
-  .contact__email .btn__arrow {
-    transform: rotate(-45deg);
-    transition: transform 0.3s var(--ease-out);
+  @media (min-width: 44rem) {
+    .about {
+      grid-template-columns: 9rem 1fr;
+    }
   }
-
-  .contact__email:hover .btn__arrow {
-    transform: rotate(-45deg) translateX(4px);
+  .about-owl {
+    width: 7rem;
+    margin-inline: auto;
   }
-
-  .contact__row {
-    position: relative;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .footer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 32px;
-    padding-block: 32px 40px;
-    border-top: 1px solid var(--line);
-  }
-
-  .footer__top {
-    margin-left: auto;
-    text-decoration: none;
+  .about h2 {
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
   }
 </style>
-
-<script>
-  import { createField, type Shape } from "../scripts/particles";
-
-  // 章節裡的小粒子圖：進入畫面才建立，離開就暫停
-  document.querySelectorAll<HTMLCanvasElement>("canvas[data-viz]").forEach((canvas) => {
-    createField({
-      canvas,
-      shape: canvas.dataset.viz as Shape,
-      count: innerWidth < 700 ? 900 : 1500,
-      scale: () => 0.5,
-    });
-  });
-
-  // 每個區塊進入畫面時，依序淡入（只觸發一次）
-  const groups = document.querySelectorAll<HTMLElement>("[data-reveal]");
-  if ("IntersectionObserver" in window) {
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          entry.target.classList.add("is-in");
-          io.unobserve(entry.target);
-        }
-      },
-      { rootMargin: "0px 0px -10% 0px", threshold: 0.05 },
-    );
-    groups.forEach((group) => io.observe(group));
-  } else {
-    groups.forEach((group) => group.classList.add("is-in"));
-  }
-</script>
