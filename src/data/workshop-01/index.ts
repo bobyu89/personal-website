@@ -61,7 +61,7 @@ export const prep = [
 
 export const stations = [
   { no: 1, title: "把臨床疑問寫成 PICO", output: "一句 PICO 問題，加上刪掉的版本", ready: true },
-  { no: 2, title: "找文獻：檢索式自己跑", output: "一張可以重跑的檢索紀錄表", ready: false },
+  { no: 2, title: "找文獻：檢索式自己跑", output: "一張可以重跑的檢索紀錄表", ready: true },
   { no: 3, title: "讀文獻：筆記長在 Obsidian", output: "三篇有評讀、能回到原文的筆記", ready: false },
   { no: 4, title: "整理證據", output: "一張文獻矩陣", ready: false },
   { no: 5, title: "寫作：AI 改語氣，不改主張", output: "一段 APA 7 檢查過的文獻探討", ready: false },
@@ -112,5 +112,43 @@ export const s1 = {
     { k: "N", name: "新穎", ask: "有沒有一點點是還沒被回答的？" },
     { k: "E", name: "合乎倫理", ask: "會不會讓病人多承受不必要的風險？" },
     { k: "R", name: "相關", ask: "答案出來，會改變臨床上的什麼？" },
+  ],
+};
+
+/* ── 第 2 站（太空主題：在文獻宇宙裡找星星） ─────────────── */
+
+export const s2 = {
+  // 每個 PICO 概念變成一團「星系」：同一個星系裡的詞用 OR，星系之間用 AND
+  concepts: [
+    { k: "p", label: "P 對象", hint: "例如：older adults, inpatients, aged" },
+    { k: "i", label: "I 介入／暴露", hint: "例如：bed alarm, exit alarm" },
+    { k: "c", label: "C 比較", hint: "通常不放進檢索式，先寫下來就好" },
+    { k: "o", label: "O 結果", hint: "例如：accidental falls, falls" },
+  ],
+  synonymPrompt: `我的研究問題是：{question}
+
+請把它拆成 P、I、C、O 四個概念。每個概念列出：
+1. 常見的英文同義詞、不同拼法、縮寫
+2. 可能對應的 MeSH 詞，每一個都標註「需要到 MeSH Browser 確認」
+
+不要幫我寫檢索式，也不要推薦任何文獻。`,
+  // 示範用：故意請 AI 直接給文獻，再一篇一篇查
+  fakePrompt: `請給我五篇關於「{topic}」的研究文獻，附上作者、年份、期刊、DOI。`,
+  fakeChecks: ["PubMed 查得到標題", "作者對", "期刊、年份對", "DOI 打得開", "內容真的在講這件事"],
+  tunePrompt: `我在 PubMed 用這個檢索式：
+{query}
+
+找到 {n} 篇，我覺得{feel}。
+請建議我可以怎麼調整（加或拿掉哪些詞、要不要用欄位標籤），每一個調整都說明理由。
+不要推薦任何文獻。`,
+  fakeStudy: {
+    text: "2023 年一項研究請 ChatGPT 寫 84 篇短文獻回顧，逐一查證 636 筆引用：GPT-3.5 有 55% 是編造的，GPT-4 有 18%。就算是真的文獻，也分別有 43% 和 24% 的作者、年份、期刊等資料有錯。",
+    cite: "Walters & Wilder（2023），Scientific Reports, 13, 14045",
+    href: "https://doi.org/10.1038/s41598-023-41032-5",
+  },
+  links: [
+    { label: "MeSH Browser", href: "https://meshb.nlm.nih.gov/" },
+    { label: "PubMed", href: "https://pubmed.ncbi.nlm.nih.gov/" },
+    { label: "ZotMax 醫學文獻快速搜尋", href: "https://bobyu89.github.io/ZotMax/search.html" },
   ],
 };

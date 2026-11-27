@@ -1,0 +1,495 @@
+---
+import fs from "node:fs";
+import "@fontsource/iansui/400.css";
+import "@fontsource/young-serif/400.css";
+import "../../../../../styles/global.css";
+import { workshop, s2 } from "../../../../../data/workshop-01";
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+// 插圖放在 public/img/forest/s2/，還沒放進來的頁面就只顯示文字
+const art = (n: string) => (fs.existsSync(`public/img/forest/s2/s2-${n}.webp`) ? `${base}img/forest/s2/s2-${n}.webp` : "");
+const pics = {
+  cover: art("01-telescope"),
+  galaxy: art("02-galaxies"),
+  catalog: art("03-catalog"),
+  fake: art("04-fake-star"),
+  panel: art("06-control"),
+  compare: art("07-compare"),
+  rocket: art("08-rocket"),
+};
+const stars = Array.from({ length: 70 }, (_, i) => ({
+  x: (i * 37.3) % 100,
+  y: (i * 61.7) % 100,
+  r: 0.6 + ((i * 13) % 5) * 0.35,
+  d: (i % 7) * 0.6,
+}));
+---
+
+<!doctype html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>第 2 站投影｜{workshop.title}</title>
+    <meta name="theme-color" content="#1d2740" />
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+  </head>
+  <body class="space">
+    <div class="sky" aria-hidden="true">
+      {stars.map((s) => <i style={`left:${s.x}%;top:${s.y}%;width:${s.r}px;height:${s.r}px;animation-delay:${s.d}s`} />)}
+    </div>
+    <main class="deck" data-deck>
+      <section class="slide" aria-label="第 1 頁">
+        <div class={pics.cover ? "two" : ""}>
+          <div>
+            <p class="eyebrow">{workshop.title}　第 2 站</p>
+            <h1>找文獻：<br />在文獻宇宙裡找星星</h1>
+            <p class="lead">PubMed 有三千多萬篇文獻，像一整片星空。<br />今天畫一張星圖：別人拿著它，也能找到同一批星星。</p>
+          </div>
+          {pics.cover && <img class="art" src={pics.cover} alt="熊、兔子、狗戴著泡泡頭盔，用望遠鏡看星空" />}
+        </div>
+      </section>
+
+      <section class="slide" aria-label="第 2 頁">
+        <div class={pics.galaxy ? "two wide" : ""}>
+          <div>
+            <p class="eyebrow">0–10 分　開場</p>
+            <h2>每個概念，是一團星系</h2>
+            <div class="gal4">
+              <div><b>P</b>對象</div>
+              <div><b>I</b>介入</div>
+              <div class="dim"><b>C</b>比較<small>通常不放</small></div>
+              <div><b>O</b>結果</div>
+            </div>
+            <p class="foot-note">第 1 站寫的 PICO，每一格都變成一團星系，裡面放同義詞。</p>
+          </div>
+          {pics.galaxy && <img class="art" src={pics.galaxy} alt="四團發光的星系，熊坐在月亮上看著" />}
+        </div>
+      </section>
+
+      <section class="slide" aria-label="第 3 頁">
+        <div class={pics.catalog ? "two wide" : ""}>
+          <div>
+            <p class="eyebrow">10–25 分　示範一</p>
+            <h2>AI 列候選，MeSH 來確認</h2>
+            <ol class="steps">
+              <li>請 AI 列出每個概念的英文同義詞和 MeSH 候選</li>
+              <li>一個一個到 <b>MeSH Browser</b> 查：有沒有這個詞？定義是不是你要的？</li>
+              <li>兩邊列的詞不一樣，都撿一點，最後由你決定</li>
+            </ol>
+            <p class="foot-note">AI 給的是「可能」，MeSH Browser 給的是「確定」。</p>
+          </div>
+          {pics.catalog && <img class="art" src={pics.catalog} alt="兔子翻著一本星星目錄，對照窗外的星空" />}
+        </div>
+      </section>
+
+      <section class="slide" aria-label="第 4 頁">
+        <div class={pics.fake ? "two wide" : ""}>
+          <div>
+            <p class="eyebrow">25–35 分　示範二</p>
+            <h2>假星星</h2>
+            <p class="lead">請 AI 直接給五篇文獻，再一篇一篇到 PubMed 查。</p>
+            <ul class="checks">{s2.fakeChecks.map((c) => <li>{c}</li>)}</ul>
+            <div class="stat">
+              <div><b>55%</b><span>GPT-3.5 的引用是編的</span></div>
+              <div><b>18%</b><span>GPT-4 的引用是編的</span></div>
+            </div>
+            <p class="src">Walters & Wilder（2023），Scientific Reports, 13, 14045。真的那些，也有 24–43% 資料有錯。</p>
+          </div>
+          {pics.fake && <img class="art" src={pics.fake} alt="狗拿著放大鏡看一顆星星，發現它其實是畫在紙上的" />}
+        </div>
+      </section>
+
+      <section class="slide" aria-label="第 5 頁">
+        <p class="eyebrow">35–70 分　實作</p>
+        <h2>OR 是同一團星系，AND 是星系的交集</h2>
+        <div class="venn" role="img" aria-label="三個圓圈：P（older adults OR inpatients）、I（bed alarm OR exit alarm）、O（accidental falls OR falls），三個重疊的地方就是要找的文獻">
+          <span class="c p">P<small>older adults<br />OR inpatients</small></span>
+          <span class="c i">I<small>bed alarm<br />OR exit alarm</small></span>
+          <span class="c o">O<small>accidental falls<br />OR falls</small></span>
+          <span class="hit">要找的星星</span>
+        </div>
+        <p class="foot-note">(P 的詞 OR …) AND (I 的詞 OR …) AND (O 的詞 OR …)</p>
+      </section>
+
+      <section class="slide" aria-label="第 6 頁">
+        <div class={pics.panel ? "two wide" : ""}>
+          <div>
+            <p class="eyebrow">35–70 分　實作</p>
+            <h2>畫出你的星圖</h2>
+            <ol class="steps">
+              <li>同義詞提示詞 → AI 列候選詞</li>
+              <li>MeSH Browser 確認，打勾</li>
+              <li>填進四個星系，學習單自動組檢索式</li>
+              <li>在 PubMed 打開，記下篇數</li>
+              <li>太多或太少 → 請 AI 建議，自己決定改不改</li>
+              <li>每改一次，紀錄表多一列</li>
+            </ol>
+          </div>
+          {pics.panel && <img class="art" src={pics.panel} alt="熊坐在太空船的控制台前，專心按著按鈕" />}
+        </div>
+      </section>
+
+      <section class="slide" aria-label="第 7 頁">
+        <div class={pics.compare ? "two wide" : ""}>
+          <div>
+            <p class="eyebrow">70–80 分　兩人互看</p>
+            <h2>別人拿你的星圖，<br />找得到同一批星星嗎？</h2>
+            <p class="lead">把最後一列的檢索式給旁邊的人，在他的電腦上重跑。</p>
+            <p class="foot-note">篇數不一樣？找找看：少了引號、日期不同，還是用了篩選條件沒寫下來。</p>
+          </div>
+          {pics.compare && <img class="art" src={pics.compare} alt="兔子和狗各拿一張星圖，對照著同一片星空" />}
+        </div>
+      </section>
+
+      <section class="slide" aria-label="第 8 頁">
+        <div class={pics.rocket ? "two" : ""}>
+          <div>
+            <p class="eyebrow">80–90 分　收尾</p>
+            <h2>帶到下一站</h2>
+            <p class="big">挑 <b class="gold">3 篇</b>最接近你 PICO 的文獻，<br />寫下 PMID。</p>
+            <p class="foot-note">第 3 站：收進 Zotero，讀進 Obsidian。</p>
+          </div>
+          {pics.rocket && <img class="art" src={pics.rocket} alt="三隻坐著小火箭，飛向下一顆星球" />}
+        </div>
+      </section>
+    </main>
+
+    <nav class="hud" aria-label="換頁">
+      <button type="button" data-prev aria-label="上一頁">←</button>
+      <span data-count>1 / 8</span>
+      <button type="button" data-next aria-label="下一頁">→</button>
+      <button type="button" data-full aria-label="全螢幕">全螢幕</button>
+      <a href={`${base}files/workshop-01/s2-slides.pdf`} download="第2站_找文獻.pdf">下載 PDF</a>
+      <a href={`${base}files/workshop-01/s2-slides.pptx`} download="第2站_找文獻.pptx">下載 PPT</a>
+    </nav>
+
+    <script>
+      const slides = Array.from(document.querySelectorAll<HTMLElement>(".slide"));
+      const count = document.querySelector<HTMLElement>("[data-count]")!;
+      let i = 0;
+      const go = (n: number) => {
+        i = Math.max(0, Math.min(slides.length - 1, n));
+        slides.forEach((s, k) => s.classList.toggle("on", k === i));
+        count.textContent = `${i + 1} / ${slides.length}`;
+        history.replaceState(null, "", `#${i + 1}`);
+      };
+      document.addEventListener("keydown", (e) => {
+        if (["ArrowRight", "PageDown", " "].includes(e.key)) (e.preventDefault(), go(i + 1));
+        if (["ArrowLeft", "PageUp"].includes(e.key)) (e.preventDefault(), go(i - 1));
+        if (e.key === "Home") go(0);
+        if (e.key === "End") go(slides.length - 1);
+        if (e.key === "f" || e.key === "F") toggleFull();
+      });
+      const toggleFull = () => {
+        if (document.fullscreenElement) document.exitFullscreen();
+        else document.documentElement.requestFullscreen?.();
+      };
+      document.querySelector("[data-prev]")!.addEventListener("click", () => go(i - 1));
+      document.querySelector("[data-next]")!.addEventListener("click", () => go(i + 1));
+      document.querySelector("[data-full]")!.addEventListener("click", toggleFull);
+      let x0 = 0;
+      addEventListener("touchstart", (e) => (x0 = e.touches[0].clientX), { passive: true });
+      addEventListener("touchend", (e) => {
+        const dx = e.changedTouches[0].clientX - x0;
+        if (Math.abs(dx) > 50) go(i + (dx < 0 ? 1 : -1));
+      });
+      go((parseInt(location.hash.slice(1)) || 1) - 1);
+    </script>
+
+    <style>
+      :root {
+        --night: #1d2740;
+        --night-2: #26324f;
+        --cream: #f3e6c8;
+        --cream-soft: #c9bfa8;
+        --gold: #e9c25a;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body.space {
+        overflow: hidden;
+        background: radial-gradient(1200px 700px at 70% 20%, #2b3a63 0%, var(--night) 60%) fixed, var(--night);
+        color: var(--cream);
+      }
+      .sky {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+      }
+      .sky i {
+        position: absolute;
+        border-radius: 50%;
+        background: var(--cream);
+        opacity: 0.7;
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .sky i {
+          animation: twinkle 3.5s ease-in-out infinite;
+        }
+      }
+      @keyframes twinkle {
+        50% {
+          opacity: 0.2;
+        }
+      }
+      .slide {
+        position: fixed;
+        inset: 0;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        padding: 5vh 6vw 9vh;
+        font-size: clamp(1rem, min(2.1vw, 3.7vh), 3rem);
+      }
+      .slide.on {
+        display: flex;
+        animation: in 0.5s ease;
+      }
+      @keyframes in {
+        from {
+          opacity: 0;
+          translate: 0 14px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .slide.on {
+          animation: none;
+        }
+      }
+      h1 {
+        font-size: 2.5em;
+        line-height: 1.2;
+        margin-bottom: 0.5em;
+      }
+      h2 {
+        font-size: 2.1em;
+        margin-bottom: 0.5em;
+      }
+      .eyebrow {
+        font-size: 0.75em;
+        color: var(--gold);
+      }
+      .lead {
+        color: var(--cream-soft);
+        line-height: 1.7;
+      }
+      .two {
+        display: grid;
+        grid-template-columns: 1.3fr 1fr;
+        gap: 4vw;
+        align-items: center;
+      }
+      .two.wide {
+        grid-template-columns: 1.5fr 1fr;
+        gap: 3vw;
+      }
+      .art {
+        width: 100%;
+        max-height: 70vh;
+        object-fit: contain;
+      }
+      .foot-note {
+        margin-top: 1em;
+        color: var(--gold);
+      }
+      .gal4 {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.2vw;
+      }
+      .gal4 div {
+        aspect-ratio: 1;
+        border-radius: 50%;
+        display: grid;
+        place-content: center;
+        text-align: center;
+        background: radial-gradient(circle, #f3e6c822 0%, #f3e6c808 60%, transparent 70%);
+        border: 2px dashed #e9c25a88;
+        font-size: 0.85em;
+      }
+      .gal4 b {
+        display: block;
+        font-family: var(--display);
+        font-size: 2em;
+        color: var(--gold);
+        line-height: 1;
+      }
+      .gal4 small {
+        display: block;
+        font-size: 0.7em;
+        color: var(--cream-soft);
+      }
+      .gal4 .dim {
+        opacity: 0.5;
+      }
+      .steps {
+        margin: 0;
+        padding-left: 1.3em;
+        display: grid;
+        gap: 0.45em;
+        line-height: 1.5;
+      }
+      .steps b {
+        color: var(--gold);
+      }
+      .checks {
+        list-style: none;
+        padding: 0;
+        margin: 0.4em 0 0.8em;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35em 0.6em;
+        font-size: 0.8em;
+      }
+      .checks li {
+        border: 1.5px solid #e9c25a88;
+        border-radius: 999px;
+        padding: 0.1em 0.7em;
+      }
+      .checks li::before {
+        content: "☐ ";
+        color: var(--gold);
+      }
+      .stat {
+        display: flex;
+        gap: 2.5vw;
+      }
+      .stat b {
+        display: block;
+        font-family: var(--display);
+        font-size: 2.3em;
+        color: var(--gold);
+        line-height: 1.1;
+      }
+      .stat span {
+        font-size: 0.8em;
+        color: var(--cream-soft);
+      }
+      .src {
+        margin-top: 0.8em;
+        font-size: 0.6em;
+        color: var(--cream-soft);
+      }
+      .venn {
+        position: relative;
+        width: min(100%, 60vh);
+        aspect-ratio: 1.15;
+        margin: 0 auto;
+        font-size: min(1em, 3.2vw);
+      }
+      .venn .c {
+        position: absolute;
+        width: 58%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        border: 2px solid var(--gold);
+        background: #e9c25a14;
+        display: grid;
+        place-content: start center;
+        padding-top: 9%;
+        text-align: center;
+        font-family: var(--display);
+        font-size: 1.4em;
+        color: var(--gold);
+      }
+      .venn .c small {
+        font-family: var(--sans);
+        font-size: 0.42em;
+        line-height: 1.4;
+        color: var(--cream);
+      }
+      .venn .p {
+        left: 0;
+        top: 0;
+        place-content: start start;
+        padding: 16% 0 0 13%;
+        text-align: left;
+      }
+      .venn .i {
+        right: 0;
+        top: 0;
+        place-content: start end;
+        padding: 16% 13% 0 0;
+        text-align: right;
+      }
+      .venn .o {
+        left: 21%;
+        bottom: 0;
+        place-content: end center;
+        padding: 0 0 13%;
+      }
+      .venn .hit {
+        position: absolute;
+        left: 50%;
+        top: 52%;
+        transform: translate(-50%, -50%);
+        background: var(--gold);
+        color: var(--night);
+        border-radius: 999px;
+        padding: 0.15em 0.7em;
+        font-size: 0.7em;
+        white-space: nowrap;
+        box-shadow: 0 0 24px #e9c25a99;
+      }
+      .big {
+        font-size: 1.35em;
+        line-height: 1.7;
+      }
+      .gold {
+        color: var(--gold);
+      }
+      .hud {
+        position: fixed;
+        right: 2vw;
+        bottom: 2vh;
+        display: flex;
+        gap: 0.4rem;
+        align-items: center;
+        font-size: 0.9rem;
+        opacity: 0.6;
+        transition: opacity 0.2s;
+        color: var(--cream);
+      }
+      .hud:hover {
+        opacity: 1;
+      }
+      .hud a,
+      .hud button {
+        font: inherit;
+        color: var(--cream);
+        text-decoration: none;
+        border: 1.5px solid #f3e6c855;
+        background: var(--night-2);
+        border-radius: 999px;
+        padding: 0.2rem 0.7rem;
+        cursor: pointer;
+      }
+      @media (max-width: 48rem) {
+        [data-full] {
+          display: none;
+        }
+        .two,
+        .two.wide {
+          grid-template-columns: 1fr;
+        }
+        .gal4 {
+          grid-template-columns: repeat(2, 1fr);
+          max-width: 70vw;
+        }
+        .art {
+          max-height: 30vh;
+        }
+        .venn {
+          width: 100%;
+        }
+        .slide {
+          overflow-y: auto;
+          justify-content: flex-start;
+        }
+      }
+    </style>
+  </body>
+</html>
