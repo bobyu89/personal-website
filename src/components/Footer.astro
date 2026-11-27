@@ -1,0 +1,78 @@
+---
+import { contact, site } from "../data/site";
+const links = contact.links.filter((l) => l.href);
+const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.subject)}`;
+const year = new Date().getFullYear();
+---
+
+<footer class="foot">
+  <svg class="ground" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 60 V30 C150 0 300 10 450 24 C620 40 760 6 920 14 C1040 20 1120 34 1200 26 V60 Z" fill="#3f6b4d"></path>
+    <path d="M0 60 V44 C200 30 380 40 600 46 C820 52 1000 36 1200 42 V60 Z" fill="#2d5240"></path>
+  </svg>
+  <div class="inner">
+    <div class="wrap row">
+      <p class="name">{site.name}</p>
+      <ul>
+        <li><a href={mailto}>寫信給我</a></li>
+        {
+          links.map((l) => (
+            <li>
+              <a href={l.href} rel="noopener">
+                {l.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="small">© {year} Bob Yu・插畫與文字皆為原創・課程內容不能取代臨床判斷與所屬單位的規範</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .foot {
+    margin-top: 3rem;
+    color: #f1e2bf;
+  }
+  .ground {
+    display: block;
+    width: 100%;
+    height: 48px;
+  }
+  .inner {
+    background: var(--moss-deep);
+    padding-block: 1.5rem 2rem;
+  }
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 1.5rem;
+  }
+  .name {
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin: 0;
+  }
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  a {
+    color: #f6d77a;
+  }
+  a:hover {
+    color: #fff3c4;
+  }
+  .small {
+    flex-basis: 100%;
+    margin: 0.4rem 0 0;
+    font-size: 0.85rem;
+    opacity: 0.8;
+  }
+</style>
