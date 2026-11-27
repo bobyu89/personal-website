@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Leaf from "../../components/Leaf.astro";
-import Animal from "../../components/Animal.astro";
+import Pic from "../../components/Pic.astro";
 import { courses, type Course } from "../../data/courses";
 
 export function getStaticPaths() {
@@ -33,7 +33,7 @@ const next = courses[i + 1];
         <p class="lede">{c.lede}</p>
       </div>
       <figure class="icon">
-        <Animal kind={c.guide.kind} prop={c.guide.prop} size={c.guide.kind === "team" ? "11rem" : "7.5rem"} />
+        <Pic name={c.guide.img} alt={c.guide.alt} size={c.guide.img === "course-04" ? "15rem" : "12rem"} eager />
         <figcaption>{c.guide.line}</figcaption>
       </figure>
     </header>

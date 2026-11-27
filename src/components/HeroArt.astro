@@ -1,199 +1,62 @@
 ---
 /**
- * 首頁插畫：一棵銀杏樹、樹下讀書的熊、撐著銀杏葉的兔子、叼著信的狗、路標、兩隻綠色小鳥。全部是原創的 SVG。
- * 畫法：低彩度大地色、細咖啡色線，外層套 #paint 手繪濾鏡（邊緣抖動＋顏料顆粒，在 PaintDefs.astro）。
- * 樹冠的葉子在建置時用固定種子的亂數排好，所以每次建置的樣子都一樣。
+ * 首頁主視覺：Bob 用 AI 繪圖生成的銀杏樹與三位森林住民（public/img/forest/hero.webp）。
+ * 弧形標語與路標上的字用網頁文字疊上去（AI 寫的字常出錯，也方便日後修改）。
  */
+import Pic from "./Pic.astro";
 import { site } from "../data/site";
-import Critter from "./Critter.astro";
-
-let seed = 20261127;
-const rand = () => {
-  seed = (seed * 1103515245 + 12345) % 2147483648;
-  return seed / 2147483648;
-};
-const palette = ["#e1b04a", "#d6a03e", "#c98f35", "#e7c062", "#be8530", "#dcab45", "#c9a04a"];
-const canopy = Array.from({ length: 480 }, () => {
-  const a = rand() * Math.PI * 2;
-  const r = Math.sqrt(rand());
-  const x = 300 + Math.cos(a) * r * 182;
-  const y = 236 + Math.sin(a) * r * 108 - (1 - r) * 10;
-  return {
-    x: x.toFixed(1),
-    y: y.toFixed(1),
-    s: (0.46 + rand() * 0.3).toFixed(3),
-    rot: Math.round(rand() * 360),
-    c: palette[Math.floor(rand() * palette.length)],
-  };
-}).sort((p, q) => +p.y - +q.y);
-const ink = "#3b2a1e";
 ---
 
-<svg
-  class="hero-art"
-  viewBox="0 0 600 560"
-  role="img"
-  aria-label="一棵金黃的銀杏樹，樹下有一隻穿綠毛衣、正在讀書的熊；路標旁穿芥末黃開襟衫的兔子撐著一片銀杏葉當傘，一隻穿吊帶褲的小狗叼著信跑過來，天上有兩隻綠色小鳥"
->
-  <defs>
-    <path id="gl" d="M0 -14 C-9 -14 -21 -21 -24 -34 C-16 -42 -6 -42 -2 -37 L0 -31 L2 -37 C6 -42 16 -42 24 -34 C21 -21 9 -14 0 -14 Z"></path>
-    <linearGradient id="hill" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#c7a650"></stop>
-      <stop offset=".5" stop-color="#b3923f"></stop>
-      <stop offset="1" stop-color="#977a35"></stop>
-    </linearGradient>
-    <radialGradient id="glow" cx=".5" cy=".45" r=".6">
-      <stop offset="0" stop-color="#fbeec8" stop-opacity=".85"></stop>
-      <stop offset="1" stop-color="#fbeec8" stop-opacity="0"></stop>
-    </radialGradient>
-    <path id="arc" d="M 20 138 Q 300 -40 580 138"></path>
-  </defs>
-
-  <!-- 弧形標語 -->
-  <text class="arc-text" font-size="27"><textPath href="#arc" startOffset="50%" text-anchor="middle">{site.motto}</textPath></text>
-
-  <ellipse cx="300" cy="260" rx="250" ry="170" fill="url(#glow)"></ellipse>
-
-  <!-- 雲：扁扁的、像用粉彩抹上去 -->
-  <g fill="#f8efdc" stroke="#e3d3b3" stroke-width="1" filter="url(#paint)">
-    <path class="cloud c1" d="M28 214 c4 -12 18 -16 28 -12 c8 -12 30 -12 38 0 c12 -2 22 4 22 12 c-2 6 -10 8 -18 8 h-62 c-8 0 -10 -4 -8 -8 Z"></path>
-    <path class="cloud c2" d="M462 176 c4 -10 16 -14 26 -10 c8 -11 28 -11 34 0 c11 -1 20 4 20 11 c-2 5 -9 7 -16 7 h-56 c-7 0 -9 -4 -8 -8 Z"></path>
-    <path class="cloud c3" d="M496 334 c3 -8 12 -11 20 -8 c6 -8 21 -8 26 0 c9 -1 15 3 15 9 c-1 4 -7 5 -12 5 h-42 c-6 0 -8 -3 -7 -6 Z"></path>
-  </g>
-
-  <!-- 綠色小鳥 -->
-  <g class="bird b1" transform="translate(116 152) rotate(-12)" filter="url(#paint)" stroke={ink} stroke-width="1.2" stroke-linejoin="round">
-    <path d="M0 0 C8 -12 26 -12 32 -2 C24 6 8 8 0 0 Z" fill="#3d6556"></path>
-    <path d="M14 -6 C18 -20 30 -24 34 -20 C30 -12 22 -6 14 -6 Z" fill="#2c4d42"></path>
-    <path d="M32 -2 L39 -4 L33 2 Z" fill="#c9963a"></path>
-    <circle cx="27" cy="-5" r="1.5" fill={ink} stroke="none"></circle>
-  </g>
-  <g class="bird b2" transform="translate(560 232) rotate(10) scale(-0.8 0.8)" filter="url(#paint)" stroke={ink} stroke-width="1.2" stroke-linejoin="round">
-    <path d="M0 0 C8 -12 26 -12 32 -2 C24 6 8 8 0 0 Z" fill="#3d6556"></path>
-    <path d="M14 -6 C18 -20 30 -24 34 -20 C30 -12 22 -6 14 -6 Z" fill="#2c4d42"></path>
-    <path d="M32 -2 L39 -4 L33 2 Z" fill="#c9963a"></path>
-    <circle cx="27" cy="-5" r="1.5" fill={ink} stroke="none"></circle>
-  </g>
-
-  <!-- 山丘、樹、灌木、路標：整片一起上手繪濾鏡 -->
-  <g filter="url(#paint)" stroke-linejoin="round" stroke-linecap="round">
-    <path
-      d="M14 500 C70 418 190 384 300 384 C420 384 540 420 588 500 C600 524 560 548 470 554 C360 562 240 562 130 554 C40 548 0 526 14 500 Z"
-      fill="url(#hill)"
-      stroke="#8a6d2e"
-      stroke-width="1.4"></path>
-    <path d="M60 470 C120 440 170 436 210 446 C170 456 110 468 60 470 Z" fill="#9c9446" opacity=".55"></path>
-    <path d="M390 430 C450 428 520 446 560 480 C510 470 450 452 390 430 Z" fill="#9c9446" opacity=".5"></path>
-    <path d="M20 514 C120 494 220 502 300 512 C390 522 500 502 584 514 C578 534 540 548 470 554 C360 562 240 562 130 554 C60 548 24 532 20 514 Z" fill="#8e7232" opacity=".45"></path>
-
-    <!-- 樹幹與枝 -->
-    <g fill="none" stroke="#5b3e27">
-      <path d="M300 398 C296 360 303 326 298 270" stroke-width="20"></path>
-      <path d="M299 322 C276 302 256 294 230 290" stroke-width="7"></path>
-      <path d="M301 302 C326 284 352 278 378 280" stroke-width="7"></path>
-      <path d="M299 282 C291 260 296 242 286 222" stroke-width="5.5"></path>
-    </g>
-    <path d="M292 392 C290 360 294 330 291 290" stroke="#7a5638" stroke-width="2.4" fill="none"></path>
-
-    <!-- 樹冠：先鋪一層底色，再一片一片疊葉子 -->
-    <path
-      d="M116 250 C104 196 150 140 214 132 C252 104 336 102 382 128 C444 136 494 186 486 244 C492 300 436 344 370 344 C330 362 262 362 226 344 C160 344 110 304 116 250 Z"
-      fill="#cf9c3c"
-      stroke="#a87b2a"
-      stroke-width="1.4"></path>
-    <g class="canopy" stroke="#a5772b" stroke-width="1.1">
-      {canopy.map((p) => <use href="#gl" transform={`translate(${p.x} ${p.y}) rotate(${p.rot}) scale(${p.s})`} fill={p.c} />)}
-    </g>
-
-    <!-- 灌木帶 -->
-    <path
-      d="M206 406 c4 -16 18 -20 27 -12 c5 -15 24 -18 31 -5 c8 -14 27 -14 33 0 c8 -13 29 -11 33 4 c9 -10 25 -6 28 9 c-2 6 -10 8 -18 8 h-120 c-10 0 -16 -2 -14 -4 Z"
-      fill="#2f5a4a"
-      stroke="#223f35"
-      stroke-width="1.4"></path>
-    <path d="M222 404 c4 -10 14 -12 20 -4 M258 400 c4 -10 16 -10 20 0 M296 398 c4 -10 18 -10 22 0 M334 400 c4 -10 16 -8 20 2" stroke="#4a7764" stroke-width="1.6" fill="none"></path>
-
-    <!-- 路標 -->
-    <g transform="translate(118 404)" stroke="#4e3420" stroke-width="1.6">
-      <rect x="-4" y="-6" width="8" height="78" rx="3" fill="#6f4c30"></rect>
-      <path d="M-48 2 H40 L54 14 L40 26 H-48 Z" fill="#e2cb9a"></path>
-      <path d="M48 34 H-40 L-54 46 L-40 58 H48 Z" fill="#e2cb9a"></path>
-    </g>
-  </g>
-  <text x="116" y="424" class="sign" text-anchor="middle">課程 →</text>
-  <text x="118" y="456" class="sign" text-anchor="middle">← 工具</text>
-
-  <!-- 森林住民：熊在樹下讀書、兔子撐著銀杏葉站在路標旁、狗叼著信跑來 -->
-  <Critter kind="bear" prop="book" x={404} y={418} scale={1.05} />
-  <Critter kind="rabbit" prop="leaf" x={238} y={446} scale={0.72} class="hop" />
-  <Critter kind="dog" prop="letter" x={520} y={458} scale={0.8} flip />
-
-  <!-- 地上的落葉 -->
-  <g filter="url(#paint)" stroke="#a5772b" stroke-width="1">
-    <use href="#gl" transform="translate(206 478) rotate(-60) scale(.8)" fill="#e1b04a"></use>
-    <use href="#gl" transform="translate(470 520) rotate(40) scale(.85)" fill="#c98f35"></use>
-    <use href="#gl" transform="translate(60 522) rotate(110) scale(.8)" fill="#e7c062"></use>
-    <use href="#gl" transform="translate(330 534) rotate(200) scale(.7)" fill="#b4602f"></use>
-  </g>
-</svg>
+<div class="hero-art">
+  <svg class="arc" viewBox="0 0 600 120" aria-hidden="true">
+    <path id="arc" d="M 30 116 Q 300 -24 570 116" fill="none"></path>
+    <text font-size="27"><textPath href="#arc" startOffset="50%" text-anchor="middle">{site.motto}</textPath></text>
+  </svg>
+  <div class="stage">
+    <Pic
+      name="hero"
+      eager
+      alt="一棵金黃的銀杏大樹下，穿綠毛衣的熊靠著樹幹讀書；穿芥末黃開襟衫的兔子撐著一片銀杏葉，站在路標旁；圍紅圍巾、穿吊帶褲的小狗拿著信跑過來；天上有兩隻綠色小鳥，銀杏葉在空中飄"
+    />
+    <span class="sign s1" aria-hidden="true">課程 →</span>
+    <span class="sign s2" aria-hidden="true">← 工具</span>
+  </div>
+</div>
 
 <style>
   .hero-art {
-    width: 100%;
-    height: auto;
+    position: relative;
+  }
+  .arc {
+    display: block;
+    width: 92%;
+    margin: 0 auto -4%;
     overflow: visible;
   }
-  .arc-text {
-    font-family: var(--display);
+  .arc text {
+    font-family: var(--sans);
     fill: #9a5a32;
     letter-spacing: 0.12em;
   }
+  .stage {
+    position: relative;
+    container-type: inline-size;
+  }
   .sign {
-    font-family: var(--sans);
-    font-size: 15px;
-    fill: #4e3420;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    font-size: 2.15cqw;
+    color: #5a3a22;
+    text-shadow: 0 0 3px #f3dcae, 0 0 6px #f3dcae;
+    white-space: nowrap;
+    pointer-events: none;
   }
-  @media (prefers-reduced-motion: no-preference) {
-    .cloud {
-      animation: drift 18s ease-in-out infinite alternate;
-    }
-    .c2 {
-      animation-duration: 23s;
-    }
-    .c3 {
-      animation-duration: 15s;
-    }
-    .bird {
-      animation: bob 3.2s ease-in-out infinite;
-    }
-    .b2 {
-      animation-delay: -1.4s;
-    }
-    :global(.hop) {
-      animation: hop 4s ease-in-out infinite;
-    }
+  .s1 {
+    left: 80.6%;
+    top: 61.9%;
   }
-  @keyframes drift {
-    to {
-      translate: 22px 0;
-    }
-  }
-  @keyframes bob {
-    50% {
-      translate: 0 -6px;
-    }
-  }
-  @keyframes hop {
-    0%,
-    70%,
-    100% {
-      translate: 0 0;
-    }
-    80% {
-      translate: 0 -10px;
-    }
-    90% {
-      translate: 0 0;
-    }
+  .s2 {
+    left: 79.4%;
+    top: 69.6%;
   }
 </style>

@@ -1,0 +1,50 @@
+---
+/**
+ * 森林插畫（public/img/forest/*.webp）。圖的紙底已校正成白色，
+ * 用 mix-blend-mode: multiply 疊在牛皮紙底上，看起來就像直接畫在頁面上。
+ */
+const dims = {
+  hero: [1800, 1086],
+  bear: [720, 720],
+  rabbit: [720, 720],
+  dog: [720, 720],
+  "bear-wave": [640, 640],
+  "dog-wave": [480, 480],
+  "course-01": [760, 760],
+  "course-02": [760, 760],
+  "course-03": [760, 760],
+  "course-04": [900, 675],
+} as const;
+export type PicName = keyof typeof dims;
+
+interface Props {
+  name: PicName;
+  alt: string;
+  size?: string;
+  class?: string;
+  eager?: boolean;
+}
+const { name, alt, size, class: cls = "", eager = false } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const [w, h] = dims[name];
+---
+
+<img
+  class={`pic ${cls}`}
+  src={`${base}img/forest/${name}.webp`}
+  width={w}
+  height={h}
+  alt={alt}
+  loading={eager ? "eager" : "lazy"}
+  decoding="async"
+  style={size ? `width:${size}` : undefined}
+/>
+
+<style>
+  .pic {
+    display: block;
+    height: auto;
+    max-width: 100%;
+    mix-blend-mode: multiply;
+  }
+</style>

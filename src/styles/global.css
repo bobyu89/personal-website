@@ -182,7 +182,7 @@ a:hover {
 }
 .js .reveal.is-in {
   opacity: 1;
-  translate: 0 0;
+  translate: none;
 }
 @media (prefers-reduced-motion: reduce) {
   .js .reveal {
@@ -192,12 +192,7 @@ a:hover {
   }
 }
 
-/* 內容疊在飄落的葉子上面 */
-main,
-.foot {
-  position: relative;
-  z-index: 1;
-}
+/* 插畫用 multiply 疊在紙底上，所以 main 不能自成堆疊層；飄落的葉子改放在最底層 */
 
 /* 森林住民的小動作：眨眼、搖尾巴 */
 @media (prefers-reduced-motion: no-preference) {

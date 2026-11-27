@@ -2,7 +2,7 @@
 import Base from "../layouts/Base.astro";
 import HeroArt from "../components/HeroArt.astro";
 import Leaf from "../components/Leaf.astro";
-import Animal from "../components/Animal.astro";
+import Pic from "../components/Pic.astro";
 import { about, cast, contact, openCourses, paths, tools } from "../data/site";
 import { courses } from "../data/courses";
 
@@ -48,7 +48,7 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.sub
       <ol class="toc">
         {
           courses.map((c, i) => (
-            <li class="reveal" style={`transition-delay:${i * 80}ms`}>
+            <li>
               <a href={`${base}courses/${c.slug}/`}>
                 <span class="no">
                   <Leaf tone={c.tone} size="3.4rem" rotate={i % 2 ? 14 : -14} />
@@ -60,7 +60,7 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.sub
                   <span class="tag">{c.status}</span>
                 </span>
                 <span class="ic">
-                  <Animal kind={c.guide.kind} prop={c.guide.prop} size={c.guide.kind === "team" ? "5.6rem" : "3.8rem"} />
+                  <Pic name={c.guide.img} alt="" size={c.guide.img === "course-04" ? "6.4rem" : "5rem"} />
                 </span>
               </a>
             </li>
@@ -73,7 +73,7 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.sub
   <!-- 從哪裡開始 -->
   <section class="section start" id="start">
     <div class="wrap">
-      <div class="start-head reveal">
+      <div class="start-head">
         <div class="section-head">
           <p class="eyebrow">第二章・從哪裡開始</p>
           <h2>不知道從哪裡開始？</h2>
@@ -81,7 +81,7 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.sub
         </div>
         <div class="guide">
           <p class="bubble">跟我走，<br />我帶你去！</p>
-          <Animal kind="rabbit" prop="leaf" size="7.5rem" label="引路員兔子，撐著一片銀杏葉" />
+          <Pic name="rabbit" alt="引路員兔子，撐著一片銀杏葉" size="8.5rem" />
         </div>
       </div>
       <div class="paths">
@@ -158,7 +158,7 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.sub
   <!-- 關於 -->
   <section class="section" id="about">
     <div class="wrap about card reveal">
-      <Animal kind="bear" prop="book" size="8rem" class="about-pic" label="森林的主人：一隻正在讀書的熊" />
+      <Pic name="bear-wave" alt="森林的主人：穿綠毛衣、揮手打招呼的熊" size="9.5rem" class="about-pic" />
       <div>
         <p class="eyebrow">關於</p>
         <h2>{about.heading}</h2>
@@ -176,7 +176,7 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.sub
         {
           cast.map((c, i) => (
             <li class="card reveal" style={`transition-delay:${i * 80}ms`}>
-              <Animal kind={c.kind} prop={c.prop} size="6.5rem" />
+              <Pic name={c.img} alt={c.alt} size="7rem" />
               <div>
                 <h3>
                   {c.name}
@@ -453,7 +453,7 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.sub
   }
   @media (min-width: 44rem) {
     .about {
-      grid-template-columns: 9rem 1fr;
+      grid-template-columns: 10rem 1fr;
     }
   }
   .about :global(.about-pic) {
@@ -523,7 +523,7 @@ const mailto = `mailto:${contact.email}?subject=${encodeURIComponent(contact.sub
     gap: 0.9rem;
     padding: 1rem 1.2rem;
   }
-  .cast :global(.animal) {
+  .cast :global(.pic) {
     flex: none;
   }
   .cast h3 {

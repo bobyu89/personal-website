@@ -1,6 +1,6 @@
 # Bob 的學習森林
 
-Bob Yu 的學習網站：給護理人的 AI 課、研究筆記課、文獻工具與 Claude Skills，統合在同一個地方。秋天繪本風，插畫全部是原創的 SVG。以 [Astro](https://astro.build) 建置，部署在 GitHub Pages。
+Bob Yu 的學習網站：給護理人的 AI 課、研究筆記課、文獻工具與 Claude Skills，統合在同一個地方。秋天繪本風，插畫是 Bob 用 AI 繪圖生成的手繪風圖片（換圖方式見 DESIGN.md）。以 [Astro](https://astro.build) 建置，部署在 GitHub Pages。
 
 網址：https://bobyu89.github.io/personal-website/
 
