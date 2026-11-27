@@ -1,0 +1,312 @@
+---
+import Base from "../../../layouts/Base.astro";
+import Pic from "../../../components/Pic.astro";
+import { workshop, agenda, prep, stations } from "../../../data/workshop-01";
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const root = `${base}workshop/${workshop.slug}/`;
+---
+
+<Base title={`工作坊｜${workshop.title}｜Bob 的學習森林`} description={`${workshop.title}：${workshop.sub}。`} current="new">
+  <div class="wrap">
+    <p class="crumb"><a href={`${base}courses/ai-research-writing/`}>← 回課程介紹</a></p>
+
+    <header class="head">
+      <div>
+        <p class="eyebrow">01 兩天工作坊</p>
+        <h1>{workshop.title}</h1>
+        <p class="sub">{workshop.sub}</p>
+        <ul class="facts">
+          <li><b>題目</b>{workshop.topicRule}</li>
+          <li><b>AI 工具</b>{workshop.tools}</li>
+        </ul>
+      </div>
+      <Pic name="course-01" alt="熊坐在書桌前，檯燈下讀書，旁邊堆滿書" size="13rem" eager />
+    </header>
+
+    <section class="block">
+      <h2>六站，六樣帶走的東西</h2>
+      <ol class="stations">
+        {
+          stations.map((s) => (
+            <li class={`card ${s.ready ? "" : "soon"}`}>
+              <span class="no">{s.no}</span>
+              <div>
+                <h3>{s.title}</h3>
+                <p>帶走：{s.output}</p>
+                {s.ready ? (
+                  <p class="links">
+                    <a class="btn btn-primary" href={`${root}${s.no}/`}>
+                      打開學習單
+                    </a>
+                    <a class="btn btn-quiet" href={`${root}${s.no}/slides/`}>
+                      投影頁
+                    </a>
+                  </p>
+                ) : (
+                  <span class="tag">準備中</span>
+                )}
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="block">
+      <h2>兩天議程</h2>
+      <div class="days">
+        {
+          agenda.map((d) => (
+            <div class="card day">
+              <h3>
+                {d.day}
+                <small>{d.theme}</small>
+              </h3>
+              <table>
+                <tbody>
+                  {d.rows.map((r) => (
+                    <tr class={r.station ? "st" : ""}>
+                      <th scope="row">{r.time}</th>
+                      <td>{r.what}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {d.homework && (
+                <p class="hw">
+                  <b>今晚的小作業</b>
+                  {d.homework}
+                </p>
+              )}
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>課前要準備的</h2>
+      <ul class="prep">
+        {
+          prep.map((p) => (
+            <li class="card">
+              <label>
+                <input type="checkbox" data-prep={p.what} />
+                <span>
+                  <b>{p.what}</b>
+                  {p.how}
+                  {p.href && (
+                    <a href={p.href} rel="noopener">
+                      {p.label} ↗
+                    </a>
+                  )}
+                </span>
+              </label>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="note">打勾只存在你這台電腦的瀏覽器。裝不起來沒關係，第一天 09:00 提早來，我們一起處理。</p>
+    </section>
+  </div>
+</Base>
+
+<script>
+  const KEY = "forest-ws01-prep";
+  let done: string[] = [];
+  try {
+    done = JSON.parse(localStorage.getItem(KEY) || "[]");
+    if (!Array.isArray(done)) done = [];
+  } catch {}
+  document.querySelectorAll<HTMLInputElement>("[data-prep]").forEach((b) => {
+    b.checked = done.includes(b.dataset.prep!);
+    b.addEventListener("change", () => {
+      done = Array.from(document.querySelectorAll<HTMLInputElement>("[data-prep]"))
+        .filter((x) => x.checked)
+        .map((x) => x.dataset.prep!);
+      try {
+        localStorage.setItem(KEY, JSON.stringify(done));
+      } catch {}
+    });
+  });
+</script>
+
+<style>
+  .crumb {
+    margin: 1.4rem 0 0.6rem;
+  }
+  .head {
+    display: grid;
+    gap: 1rem 2rem;
+    align-items: center;
+    padding-block: 0.5rem 1.5rem;
+  }
+  @media (min-width: 46rem) {
+    .head {
+      grid-template-columns: 1fr auto;
+    }
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    margin: 0.3rem 0 0.2rem;
+  }
+  .sub {
+    color: var(--rust);
+    font-size: 1.15rem;
+  }
+  .facts {
+    list-style: none;
+    padding: 0;
+    margin: 0.8rem 0 0;
+    display: grid;
+    gap: 0.3rem;
+  }
+  .facts b {
+    display: inline-block;
+    min-width: 4.5rem;
+    color: var(--moss-deep);
+  }
+  .block {
+    margin-top: clamp(2rem, 5vw, 3rem);
+  }
+  .block h2 {
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+  }
+  .stations {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  @media (min-width: 52rem) {
+    .stations {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .stations li {
+    display: flex;
+    gap: 0.9rem;
+    padding: 1.1rem 1.2rem;
+  }
+  .stations .soon {
+    opacity: 0.75;
+  }
+  .no {
+    flex: none;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-family: var(--display);
+    background: var(--ginkgo);
+    border: 2px solid var(--ginkgo-deep);
+  }
+  .stations h3 {
+    font-size: 1.15rem;
+    margin: 0.2rem 0 0.2rem;
+  }
+  .stations p {
+    margin: 0 0 0.5rem;
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .links .btn {
+    padding: 0.35rem 0.9rem;
+    font-size: 0.92rem;
+  }
+  .days {
+    display: grid;
+    gap: 1rem;
+  }
+  @media (min-width: 52rem) {
+    .days {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .day {
+    padding: 1.2rem 1.4rem;
+  }
+  .day h3 {
+    font-size: 1.3rem;
+  }
+  .day h3 small {
+    margin-left: 0.6rem;
+    font-size: 0.9rem;
+    color: var(--rust);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th,
+  td {
+    text-align: left;
+    padding: 0.35rem 0.4rem;
+    border-bottom: 1px dashed var(--line);
+    vertical-align: top;
+  }
+  th {
+    font-weight: 400;
+    white-space: nowrap;
+    color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+    width: 7.5rem;
+  }
+  tr.st td {
+    color: var(--moss-deep);
+    font-weight: 700;
+  }
+  .hw {
+    margin: 0.8rem 0 0;
+    background: #f3cf6340;
+    border-left: 4px solid var(--ginkgo);
+    padding: 0.5rem 0.8rem;
+    border-radius: 0 10px 10px 0;
+  }
+  .hw b {
+    color: var(--rust-deep);
+    margin-right: 0.5rem;
+  }
+  .prep {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.7rem;
+  }
+  .prep li {
+    padding: 0.8rem 1rem;
+  }
+  .prep label {
+    display: flex;
+    gap: 0.7rem;
+    align-items: flex-start;
+    cursor: pointer;
+  }
+  .prep input {
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-top: 0.35rem;
+    accent-color: var(--moss);
+    flex: none;
+  }
+  .prep b {
+    display: block;
+  }
+  .prep a {
+    margin-left: 0.4rem;
+  }
+  .note {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    margin-top: 0.8rem;
+  }
+</style>

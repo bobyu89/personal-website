@@ -31,6 +31,15 @@ const next = courses[i + 1];
         <h1>{c.title}</h1>
         <p class="sub">{c.sub}</p>
         <p class="lede">{c.lede}</p>
+        {
+          c.workshop && (
+            <p class="ws-link">
+              <a class="btn btn-primary" href={`${base}${c.workshop}`}>
+                打開工作坊教材 →
+              </a>
+            </p>
+          )
+        }
       </div>
       <figure class="icon">
         <Pic name={c.guide.img} alt={c.guide.alt} size={c.guide.img === "course-04" ? "15rem" : "12rem"} eager />
