@@ -1,0 +1,493 @@
+---
+import "@fontsource/iansui/400.css";
+import "@fontsource/young-serif/400.css";
+import "../../../../../styles/global.css";
+import { workshop, stations, s1 } from "../../../../../data/workshop-01";
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const art = (n: string) => `${base}img/forest/s1/s1-${n}.webp`;
+const ruleArt = [
+  { n: "02-rule1", alt: "熊用一片銀杏葉蓋住資料夾" },
+  { n: "02-rule2", alt: "兔子拿著放大鏡查一本書" },
+  { n: "02-rule3", alt: "狗坐在小書桌前，用羽毛筆在信上簽名" },
+];
+const day1 = stations.slice(0, 3);
+const day2 = stations.slice(3);
+const askShort = s1.askPrompt.replace("{moment}", "＿＿＿＿＿＿");
+---
+
+<!doctype html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>第 1 站投影｜{workshop.title}</title>
+    <meta name="theme-color" content="#f1e2bf" />
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+  </head>
+  <body>
+    <main class="deck" data-deck>
+      <section class="slide" aria-label="第 1 頁">
+        <div class="two">
+          <div>
+            <p class="eyebrow">{workshop.title}　兩天工作坊</p>
+            <h1>兩天，六站，<br />六樣帶走的東西</h1>
+            <div class="days">
+              <div>
+                <h3>第一天</h3>
+                <ol>{day1.map((s) => <li><b>{s.no}</b>{s.title}<small>{s.output}</small></li>)}</ol>
+              </div>
+              <div>
+                <h3>第二天</h3>
+                <ol>{day2.map((s) => <li><b>{s.no}</b>{s.title}<small>{s.output}</small></li>)}</ol>
+              </div>
+            </div>
+          </div>
+          <img class="art" src={art("01-map")} alt="熊、兔子、狗站在森林小路的起點，路上有六顆踏腳石" />
+        </div>
+      </section>
+
+      <section class="slide" aria-label="第 2 頁">
+        <p class="eyebrow">兩天都一樣</p>
+        <h2>三條規則</h2>
+        <ol class="rules">{s1.rules.map((r, k) => <li><img class="rule-art" src={art(ruleArt[k].n)} alt={ruleArt[k].alt} /><b>{r.t}</b><span>{r.d}</span></li>)}</ol>
+      </section>
+
+      <section class="slide" aria-label="第 3 頁">
+        <div class="two">
+          <div>
+            <p class="eyebrow">10–25 分　找題目</p>
+            <h2>寫下三個卡住的時刻</h2>
+            <ol class="qs">{s1.moments.map((q) => <li>{q}</li>)}</ol>
+            <p class="foot-note">寫好之後，圈一個：你真的想知道答案的那一個。</p>
+          </div>
+          <img class="art" src={art("03-moments")} alt="兔子坐在樹樁上想事情，頭上有三個空白的思考泡泡" />
+        </div>
+      </section>
+
+      <section class="slide" aria-label="第 4 頁">
+        <div class="two wide">
+          <div>
+            <p class="eyebrow">25–40 分　示範</p>
+            <h2>讓 AI 追問你，<br />不是替你寫</h2>
+            <p class="lead">Claude、ChatGPT 兩個視窗並排，同一段提示詞丟兩邊。</p>
+            <pre class="prompt">{askShort}</pre>
+          </div>
+          <img class="art" src={art("04-asked")} alt="一隻小綠鳥歪著頭向熊提問，熊在書桌前想著要怎麼回答" />
+        </div>
+      </section>
+
+      <section class="slide" aria-label="第 5 頁">
+        <div class="two wide">
+          <div>
+        <p class="eyebrow">40–70 分　實作</p>
+        <h2>關掉視窗，四格自己填</h2>
+        <div class="grid4">
+          <div><b>P</b>對象<small>哪一個單位、哪一種病人、什麼時候</small></div>
+          <div><b>I</b>介入／暴露<small>你想試的做法，或想看的因素</small></div>
+          <div><b>C</b>比較<small>不這樣做的時候，長什麼樣子</small></div>
+          <div><b>O</b>結果<small>改善什麼？用什麼量？</small></div>
+        </div>
+        <p class="foot-note">想了解經驗或感受的人用 PICo：對象、想了解的現象、情境。每改一次，舊版本留著。</p>
+          </div>
+          <img class="art" src={art("05-four-cards")} alt="熊在野餐墊上排四張空白卡片，小綠鳥停在遠處的樹枝上" />
+        </div>
+      </section>
+
+      <section class="slide" aria-label="第 6 頁">
+        <div class="two wide">
+          <div>
+            <p class="eyebrow">70–80 分　兩人互看</p>
+            <h2>FINER：打勾或打問號</h2>
+            <ul class="finer">{s1.finer.map((f) => <li><b>{f.k}</b><span>{f.name}</span><small>{f.ask}</small></li>)}</ul>
+            <p class="foot-note">問號不是扣分，是下一站要帶去找文獻的東西。</p>
+          </div>
+          <img class="art" src={art("06-swap")} alt="兔子和狗坐在長椅上交換筆記本" />
+        </div>
+      </section>
+
+      <section class="slide" aria-label="第 7 頁">
+        <div class="two">
+          <div>
+            <p class="eyebrow">80–90 分　收尾</p>
+            <h2>帶到下一站</h2>
+            <p class="big">AI 在這一站幫我的地方是<span class="nb">＿＿＿，</span><br />我自己決定的是<span class="nb">＿＿＿。</span></p>
+            <p class="foot-note">下一站：你的 P、I、C、O，每一個都會變成檢索詞。</p>
+          </div>
+          <img class="art" src={art("07-next")} alt="熊、兔子、狗一起走向下一個路標" />
+        </div>
+      </section>
+    </main>
+
+    <nav class="hud" aria-label="換頁">
+      <button type="button" data-prev aria-label="上一頁">←</button>
+      <span data-count>1 / 7</span>
+      <button type="button" data-next aria-label="下一頁">→</button>
+      <button type="button" data-full aria-label="全螢幕">全螢幕</button>
+      <a href={`${base}files/workshop-01/s1-slides.pdf`} download="第1站_把臨床疑問寫成PICO.pdf">下載 PDF</a>
+      <a href={`${base}files/workshop-01/s1-slides.pptx`} download="第1站_把臨床疑問寫成PICO.pptx">下載 PPT</a>
+    </nav>
+
+    <script>
+      const slides = Array.from(document.querySelectorAll<HTMLElement>(".slide"));
+      const count = document.querySelector<HTMLElement>("[data-count]")!;
+      let i = 0;
+      const go = (n: number) => {
+        i = Math.max(0, Math.min(slides.length - 1, n));
+        slides.forEach((s, k) => s.classList.toggle("on", k === i));
+        count.textContent = `${i + 1} / ${slides.length}`;
+        history.replaceState(null, "", `#${i + 1}`);
+      };
+      document.addEventListener("keydown", (e) => {
+        if (["ArrowRight", "PageDown", " "].includes(e.key)) (e.preventDefault(), go(i + 1));
+        if (["ArrowLeft", "PageUp"].includes(e.key)) (e.preventDefault(), go(i - 1));
+        if (e.key === "Home") go(0);
+        if (e.key === "End") go(slides.length - 1);
+        if (e.key === "f" || e.key === "F") toggleFull();
+      });
+      const toggleFull = () => {
+        if (document.fullscreenElement) document.exitFullscreen();
+        else document.documentElement.requestFullscreen?.();
+      };
+      document.querySelector("[data-prev]")!.addEventListener("click", () => go(i - 1));
+      document.querySelector("[data-next]")!.addEventListener("click", () => go(i + 1));
+      document.querySelector("[data-full]")!.addEventListener("click", toggleFull);
+      let x0 = 0;
+      addEventListener("touchstart", (e) => (x0 = e.touches[0].clientX), { passive: true });
+      addEventListener("touchend", (e) => {
+        const dx = e.changedTouches[0].clientX - x0;
+        if (Math.abs(dx) > 50) go(i + (dx < 0 ? 1 : -1));
+      });
+      go((parseInt(location.hash.slice(1)) || 1) - 1);
+    </script>
+
+    <style>
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        overflow: hidden;
+      }
+      .slide {
+        position: fixed;
+        inset: 0;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        padding: 5vh 6vw 9vh;
+        background-color: var(--kraft);
+        font-size: clamp(1rem, min(2.1vw, 3.7vh), 3rem);
+      }
+      .slide.on {
+        display: flex;
+        animation: in 0.5s ease;
+      }
+      @keyframes in {
+        from {
+          opacity: 0;
+          translate: 0 14px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .slide.on {
+          animation: none;
+        }
+      }
+      h1 {
+        font-size: 2.6em;
+        line-height: 1.2;
+        margin-bottom: 0.6em;
+      }
+      h2 {
+        font-size: 2.2em;
+        margin-bottom: 0.6em;
+      }
+      .eyebrow {
+        font-size: 0.75em;
+      }
+      .two {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 4vw;
+        align-items: center;
+      }
+      .art {
+        width: 100%;
+        max-height: 70vh;
+        object-fit: contain;
+        mix-blend-mode: multiply;
+      }
+      .two.wide {
+        grid-template-columns: 1.55fr 1fr;
+        gap: 3vw;
+      }
+      .two.wide h2 {
+        font-size: 1.8em;
+        margin-bottom: 0.4em;
+      }
+      .two.wide .prompt {
+        font-size: 0.62em;
+      }
+      .two.wide .grid4 {
+        gap: 0.6em;
+      }
+      .two.wide .grid4 div {
+        padding: 0.55em 0.8em;
+      }
+      .two.wide .grid4 b {
+        font-size: 1.4em;
+      }
+      .two.wide .finer {
+        font-size: 0.88em;
+        gap: 0.3em;
+      }
+      .two.wide .foot-note {
+        margin-top: 0.7em;
+      }
+      .lead {
+        color: var(--ink-soft);
+      }
+      .days {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2vw;
+      }
+      .days h3 {
+        font-size: 1em;
+        color: var(--rust);
+        margin-bottom: 0.3em;
+      }
+      .days ol {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 0.5em;
+        font-size: 0.8em;
+      }
+      .days li {
+        display: grid;
+        grid-template-columns: 1.6em 1fr;
+        column-gap: 0.4em;
+      }
+      .days li b {
+        grid-row: span 2;
+        width: 1.5em;
+        height: 1.5em;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: var(--ginkgo);
+        font-family: var(--display);
+        font-weight: 400;
+        font-size: 0.85em;
+      }
+      .days small {
+        color: var(--ink-soft);
+        font-size: 0.8em;
+      }
+      .rules {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2vw;
+      }
+      .rule-art {
+        display: block;
+        height: 26vh;
+        max-width: 100%;
+        object-fit: contain;
+        margin: 0 auto 0.5em;
+        mix-blend-mode: multiply;
+      }
+      .rules li {
+        background: var(--paper);
+        border-radius: 18px;
+        padding: 1em;
+        box-shadow: var(--shadow);
+      }
+      .rules b {
+        display: block;
+        font-size: 1.25em;
+        color: var(--rust-deep);
+        margin-bottom: 0.3em;
+      }
+      .qs {
+        margin: 0;
+        padding-left: 1.2em;
+        display: grid;
+        gap: 0.6em;
+        font-size: 1.05em;
+      }
+      .foot-note {
+        margin-top: 1.2em;
+        color: var(--moss-deep);
+      }
+      .split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2vw;
+        margin-bottom: 1em;
+      }
+      .win {
+        height: 18vh;
+        border: 3px dashed var(--line);
+        border-radius: 18px;
+        display: grid;
+        place-items: center;
+        color: var(--ink-soft);
+      }
+      .prompt {
+        white-space: pre-wrap;
+        font-family: var(--sans);
+        font-size: 0.78em;
+        line-height: 1.55;
+        background: var(--paper);
+        border-radius: 14px;
+        padding: 0.8em 1em;
+        margin: 0;
+      }
+      .grid4 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5vw;
+      }
+      .grid4 div {
+        background: var(--paper);
+        border-radius: 18px;
+        padding: 0.9em;
+        box-shadow: var(--shadow);
+      }
+      .grid4 b {
+        display: block;
+        font-family: var(--display);
+        font-size: 2em;
+        color: var(--rust);
+        line-height: 1;
+        margin-bottom: 0.2em;
+      }
+      .grid4 small {
+        display: block;
+        color: var(--ink-soft);
+        font-size: 0.75em;
+        margin-top: 0.3em;
+      }
+      .finer {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 0.5em;
+      }
+      .finer li {
+        display: grid;
+        grid-template-columns: 1.6em 5.5em 1fr;
+        align-items: baseline;
+        gap: 0.5em;
+        border-bottom: 2px dashed var(--line);
+        padding-bottom: 0.3em;
+      }
+      .finer b {
+        font-family: var(--display);
+        color: var(--rust);
+        font-size: 1.3em;
+      }
+      .finer small {
+        color: var(--ink-soft);
+        font-size: 0.85em;
+      }
+      .nb {
+        white-space: nowrap;
+      }
+      .big {
+        font-size: 1.4em;
+        line-height: 1.7;
+      }
+      .hud {
+        position: fixed;
+        right: 2vw;
+        bottom: 2vh;
+        display: flex;
+        gap: 0.4rem;
+        align-items: center;
+        font-size: 0.9rem;
+        opacity: 0.55;
+        transition: opacity 0.2s;
+      }
+      .hud:hover {
+        opacity: 1;
+      }
+      .hud a {
+        font: inherit;
+        color: var(--ink);
+        text-decoration: none;
+        border: 1.5px solid var(--line);
+        background: var(--paper);
+        border-radius: 999px;
+        padding: 0.2rem 0.7rem;
+      }
+      .hud button {
+        font: inherit;
+        border: 1.5px solid var(--line);
+        background: var(--paper);
+        border-radius: 999px;
+        padding: 0.2rem 0.7rem;
+        cursor: pointer;
+      }
+      @media (max-width: 48rem) {
+        [data-full] {
+          display: none;
+        }
+        .two,
+        .days,
+        .rules,
+        .split,
+        .grid4 {
+          grid-template-columns: 1fr;
+        }
+        .art {
+          max-height: 30vh;
+        }
+        .slide {
+          overflow-y: auto;
+          justify-content: flex-start;
+        }
+      }
+      /* 列印／匯出 PDF：每一頁一張 1920×1080 */
+      @media print {
+        @page {
+          size: 1920px 1080px;
+          margin: 0;
+        }
+        html,
+        body {
+          height: auto;
+          overflow: visible;
+        }
+        .hud {
+          display: none !important;
+        }
+        .slide {
+          display: flex !important;
+          position: relative;
+          inset: auto;
+          width: 1920px;
+          height: 1080px;
+          padding: 54px 115px 97px;
+          font-size: 40px;
+          animation: none !important;
+          break-after: page;
+          overflow: hidden;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        .art {
+          max-height: 756px;
+        }
+      }
+    </style>
+  </body>
+</html>

@@ -1,0 +1,558 @@
+---
+import Base from "../../../../layouts/Base.astro";
+import { workshop, s1 } from "../../../../data/workshop-01";
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const root = `${base}workshop/${workshop.slug}/`;
+---
+
+<Base title={`第 1 站學習單｜${workshop.title}｜Bob 的學習森林`} description="第 1 站：把臨床疑問寫成 PICO。網頁學習單，寫的內容只存在你自己的瀏覽器。" current="new">
+  <div class="wrap ws" data-ws>
+    <p class="crumb"><a href={root}>← 回工作坊</a></p>
+
+    <header class="ws-head">
+      <p class="eyebrow">第 1 站　學習單</p>
+      <h1>把臨床疑問寫成 PICO</h1>
+      <p class="lede">帶走：一句你自己寫的研究問題，加上被刪掉的版本。這裡打的字只存在這台電腦的瀏覽器，不會傳到任何地方。</p>
+      <p class="actions">
+        <button type="button" class="btn btn-primary" data-print>存成 PDF／列印</button>
+        <button type="button" class="btn btn-quiet" data-clear>全部清除</button>
+      </p>
+      <ul class="rules">
+        {
+          s1.rules.map((r) => (
+            <li>
+              <b>{r.t}</b>
+              {r.d}
+            </li>
+          ))
+        }
+      </ul>
+    </header>
+
+    <section class="card sec">
+      <h2><span class="n">1</span>寫下三個卡住的時刻</h2>
+      <p class="hint">用你平常說話的方式寫，不用寫成研究題目。寫好之後，圈一個你真的想知道答案的。</p>
+      <ol class="moments">
+        {
+          s1.moments.map((q, i) => (
+            <li>
+              <label for={`m${i}`}>{q}</label>
+              <textarea id={`m${i}`} rows="2" data-k={`m${i}`} placeholder="哪一天、哪一種病人、你在做什麼……"></textarea>
+              <label class="pick">
+                <input type="radio" name="pick" value={String(i)} data-k="pick" />
+                圈這一個
+              </label>
+            </li>
+          ))
+        }
+      </ol>
+      <details class="ideas">
+        <summary>寫不出來？看看這些情境，挑一個改成你自己單位的版本</summary>
+        <ul>{s1.ideas.map((t) => <li>{t}</li>)}</ul>
+      </details>
+    </section>
+
+    <section class="card sec">
+      <h2><span class="n">2</span>你想知道的是哪一種問題？</h2>
+      <div class="types">
+        {
+          s1.types.map((t, i) => (
+            <label class="type">
+              <input type="radio" name="type" value={t.id} data-k="type" checked={i === 0} />
+              <span>
+                <b>{t.label}</b>
+                <small>{t.hint}</small>
+              </span>
+            </label>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="card sec">
+      <h2><span class="n">3</span>讓 AI 追問你</h2>
+      <p class="hint">複製這段，貼到 Claude 或 ChatGPT。它會一次問你一個問題，請照實回答。問完就關掉，下一步自己寫。</p>
+      <pre class="prompt" data-ask></pre>
+      <p class="actions">
+        <button type="button" class="btn btn-primary" data-copy="ask">複製提示詞</button>
+        <a class="btn btn-quiet" href="https://claude.ai/new" target="_blank" rel="noopener">開 Claude ↗</a>
+        <a class="btn btn-quiet" href="https://chatgpt.com/" target="_blank" rel="noopener">開 ChatGPT ↗</a>
+        <span class="copied" data-copied="ask" aria-live="polite"></span>
+      </p>
+      <p class="tip">如果它直接替你寫了 PICO，回它一句：「請不要替我寫，繼續問我問題。」</p>
+    </section>
+
+    <section class="card sec">
+      <h2><span class="n">4</span>自己填四格</h2>
+      <p class="hint" data-type-hint></p>
+      <div class="grid4">
+        <label class="cell"><b data-lab="p">P 對象</b><input data-k="p" placeholder="哪一個單位、哪一種病人、什麼時候" /></label>
+        <label class="cell"><b data-lab="i">I 介入／暴露</b><input data-k="i" placeholder="你想試的做法，或想看的因素" /></label>
+        <label class="cell" data-only="pico"><b>C 比較</b><input data-k="c" placeholder="不這樣做的時候，長什麼樣子" /></label>
+        <label class="cell"><b data-lab="o">O 結果</b><input data-k="o" placeholder="改善什麼？用什麼量？" /></label>
+      </div>
+      <p class="sentence"><b>你的研究問題</b><span data-sentence>（四格填好，這裡會自動組成一句話）</span></p>
+      <p class="actions">
+        <button type="button" class="btn btn-quiet" data-keep>把這一版存成舊版本，繼續改</button>
+      </p>
+      <div class="old">
+        <h3>刪掉的版本</h3>
+        <ol data-old></ol>
+        <p class="empty" data-old-empty>還沒有。每改一次就存一版，下一站回頭看會很有用。</p>
+      </div>
+    </section>
+
+    <section class="card sec">
+      <h2><span class="n">5</span>（寫得快的人）請 AI 對你的問題提出疑問</h2>
+      <pre class="prompt" data-check></pre>
+      <p class="actions">
+        <button type="button" class="btn btn-quiet" data-copy="check">複製提示詞</button>
+        <span class="copied" data-copied="check" aria-live="polite"></span>
+      </p>
+    </section>
+
+    <section class="card sec">
+      <h2><span class="n">6</span>FINER：和旁邊的人互看</h2>
+      <p class="hint">交換研究問題，每一個字打勾或打問號。問號要寫一句理由。問號不是扣分，是下一站要帶去找文獻的東西。</p>
+      <div class="finer">
+        {
+          s1.finer.map((f) => (
+            <div class="row">
+              <p class="q">
+                <b>{f.k}</b> {f.name}
+                <small>{f.ask}</small>
+              </p>
+              <div class="marks" role="radiogroup" aria-label={`${f.name}`}>
+                <label>
+                  <input type="radio" name={`f-${f.k}`} value="ok" data-k={`f-${f.k}`} />✓
+                </label>
+                <label>
+                  <input type="radio" name={`f-${f.k}`} value="q" data-k={`f-${f.k}`} />？
+                </label>
+              </div>
+              <input class="why" data-k={`fw-${f.k}`} placeholder="打問號的話，寫一句理由" />
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="card sec">
+      <h2><span class="n">7</span>帶到下一站</h2>
+      <p class="fill">
+        AI 在這一站幫我的地方是<input data-k="help" placeholder="……" />，我自己決定的是<input data-k="mine" placeholder="……" />。
+      </p>
+      <p class="hint">下一站，你的 P、I、C、O 每一個都會變成檢索詞。</p>
+    </section>
+  </div>
+</Base>
+
+<script>
+  import { s1 } from "../../../../data/workshop-01";
+  const KEY = "forest-ws01-s1";
+  let st: Record<string, any> = {};
+  try {
+    st = JSON.parse(localStorage.getItem(KEY) || "{}") || {};
+  } catch {
+    st = {};
+  }
+  const save = () => {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(st));
+    } catch {}
+  };
+  const $ = <T extends Element = HTMLElement>(s: string) => document.querySelector<T>(s)!;
+  const fields = Array.from(document.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>("[data-k]"));
+
+  // 讀回
+  fields.forEach((el) => {
+    const k = el.dataset.k!;
+    if (el instanceof HTMLInputElement && el.type === "radio") {
+      if (st[k] !== undefined) el.checked = st[k] === el.value;
+    } else if (typeof st[k] === "string") el.value = st[k];
+  });
+  if (!Array.isArray(st.old)) st.old = [];
+
+  const val = (k: string) => {
+    const r = document.querySelector<HTMLInputElement>(`[data-k="${k}"][type="radio"]:checked`);
+    if (r) return r.value;
+    const el = document.querySelector<HTMLInputElement>(`[data-k="${k}"]:not([type="radio"])`);
+    return el ? el.value.trim() : "";
+  };
+
+  const sentence = () => {
+    const p = val("p"),
+      i = val("i"),
+      c = val("c"),
+      o = val("o");
+    if (val("type") === "pico-q") {
+      if (!p && !i && !o) return "";
+      return `${p || "＿＿"}在${o || "＿＿"}的情境中，${i || "＿＿"}的經驗是什麼？`;
+    }
+    if (!p && !i && !c && !o) return "";
+    return `在${p || "＿＿"}中，${i || "＿＿"}相較於${c || "＿＿"}，對${o || "＿＿"}有沒有影響？`;
+  };
+
+  const render = () => {
+    const pick = val("pick");
+    const moment = pick !== "" ? val(`m${pick}`) : "";
+    $("[data-ask]").textContent = s1.askPrompt.replace("{moment}", moment || "（先在第 1 步圈一個時刻，這裡會自動帶進來）");
+    const q = sentence();
+    $("[data-sentence]").textContent = q || "（四格填好，這裡會自動組成一句話）";
+    $("[data-check]").textContent = s1.checkPrompt.replace("{question}", q || "（先在第 4 步填好四格）");
+
+    const qual = val("type") === "pico-q";
+    document.querySelectorAll<HTMLElement>('[data-only="pico"]').forEach((e) => (e.hidden = qual));
+    $("[data-lab=p]").textContent = qual ? "P 對象" : "P 對象";
+    $("[data-lab=i]").textContent = qual ? "I 想了解的現象" : "I 介入／暴露";
+    $("[data-lab=o]").textContent = qual ? "Co 情境" : "O 結果";
+    $("[data-type-hint]").textContent = qual
+      ? "質性問題用 PICo：對象、想了解的現象、情境。不需要比較組。"
+      : "每一格都要具體到別人看得懂：哪一群人、做什麼、和什麼比、量什麼。";
+
+    const ol = $("[data-old]");
+    ol.innerHTML = "";
+    (st.old as string[]).forEach((t, n) => {
+      const li = document.createElement("li");
+      const s = document.createElement("s");
+      s.textContent = t;
+      const del = document.createElement("button");
+      del.type = "button";
+      del.className = "x";
+      del.textContent = "移除";
+      del.addEventListener("click", () => {
+        st.old.splice(n, 1);
+        save();
+        render();
+      });
+      li.append(s, del);
+      ol.append(li);
+    });
+    $("[data-old-empty]").hidden = st.old.length > 0;
+  };
+
+  fields.forEach((el) =>
+    el.addEventListener("input", () => {
+      st[el.dataset.k!] = el.value;
+      save();
+      render();
+    }),
+  );
+  fields.forEach((el) =>
+    el.addEventListener("change", () => {
+      st[el.dataset.k!] = el.value;
+      save();
+      render();
+    }),
+  );
+
+  $("[data-keep]").addEventListener("click", () => {
+    const q = sentence();
+    if (!q) return;
+    if (st.old[st.old.length - 1] !== q) st.old.push(q);
+    save();
+    render();
+  });
+
+  document.querySelectorAll<HTMLButtonElement>("[data-copy]").forEach((b) =>
+    b.addEventListener("click", async () => {
+      const which = b.dataset.copy!;
+      const text = $(which === "ask" ? "[data-ask]" : "[data-check]").textContent || "";
+      const out = $(`[data-copied="${which}"]`);
+      try {
+        await navigator.clipboard.writeText(text);
+        out.textContent = "已複製";
+      } catch {
+        out.textContent = "請手動選取上面的文字複製";
+      }
+      setTimeout(() => (out.textContent = ""), 2500);
+    }),
+  );
+
+  $("[data-print]").addEventListener("click", () => window.print());
+  $("[data-clear]").addEventListener("click", () => {
+    if (!confirm("確定要清除這一站寫的所有內容嗎？")) return;
+    st = { old: [] };
+    save();
+    fields.forEach((el) => {
+      if (el instanceof HTMLInputElement && el.type === "radio") el.checked = el.dataset.k === "type" && el.value === "pico";
+      else el.value = "";
+    });
+    render();
+  });
+
+  render();
+</script>
+
+<style>
+  .crumb {
+    margin: 1.4rem 0 0.4rem;
+  }
+  .ws-head h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 0.2rem 0 0.4rem;
+  }
+  .lede {
+    color: var(--ink-soft);
+    max-width: 44rem;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: center;
+    margin: 0.8rem 0;
+  }
+  .rules {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 1.5rem;
+    display: grid;
+    gap: 0.4rem;
+  }
+  @media (min-width: 52rem) {
+    .rules {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .rules li {
+    background: #b4552d14;
+    border-left: 4px solid var(--rust);
+    padding: 0.5rem 0.8rem;
+    border-radius: 0 10px 10px 0;
+    font-size: 0.95rem;
+  }
+  .rules b {
+    display: block;
+    color: var(--rust-deep);
+  }
+  .sec {
+    padding: clamp(1.1rem, 3vw, 1.8rem);
+    margin-bottom: 1.2rem;
+  }
+  .sec h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.35rem;
+  }
+  .n {
+    flex: none;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-family: var(--display);
+    font-size: 1rem;
+    background: var(--ginkgo);
+    border: 2px solid var(--ginkgo-deep);
+  }
+  .hint {
+    color: var(--ink-soft);
+  }
+  textarea,
+  input:not([type="radio"]):not([type="checkbox"]) {
+    font: inherit;
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    background: #fffdf6;
+    color: var(--ink);
+  }
+  textarea:focus,
+  input:focus {
+    outline: 3px solid #3f6b4d55;
+    border-color: var(--moss);
+  }
+  .moments {
+    margin: 0;
+    padding-left: 1.3rem;
+    display: grid;
+    gap: 1rem;
+  }
+  .moments > li > label:first-child {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  .pick {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.3rem;
+    color: var(--moss-deep);
+    cursor: pointer;
+  }
+  .ideas {
+    margin-top: 1rem;
+  }
+  .ideas summary {
+    cursor: pointer;
+    color: var(--rust-deep);
+  }
+  .types {
+    display: grid;
+    gap: 0.7rem;
+  }
+  @media (min-width: 46rem) {
+    .types {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .type {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    padding: 0.8rem 1rem;
+    border: 2px solid var(--line);
+    border-radius: 14px;
+    cursor: pointer;
+  }
+  .type:has(input:checked) {
+    border-color: var(--moss);
+    background: #3f6b4d12;
+  }
+  .type b,
+  .type small {
+    display: block;
+  }
+  .type small {
+    color: var(--ink-soft);
+  }
+  .prompt {
+    white-space: pre-wrap;
+    font-family: var(--sans);
+    font-size: 0.98rem;
+    background: #fffdf6;
+    border: 1.5px dashed var(--line);
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    margin: 0.6rem 0;
+  }
+  .copied {
+    color: var(--moss-deep);
+    font-weight: 700;
+  }
+  .tip {
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+  }
+  .grid4 {
+    display: grid;
+    gap: 0.8rem;
+  }
+  @media (min-width: 46rem) {
+    .grid4 {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .cell b {
+    display: block;
+    color: var(--moss-deep);
+    margin-bottom: 0.2rem;
+  }
+  .sentence {
+    margin: 1.2rem 0 0.4rem;
+    padding: 0.8rem 1rem;
+    background: #f3cf6340;
+    border-left: 5px solid var(--ginkgo);
+    border-radius: 0 12px 12px 0;
+    font-size: 1.15rem;
+  }
+  .sentence b {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--rust-deep);
+  }
+  .old h3 {
+    font-size: 1.05rem;
+    margin-top: 0.8rem;
+  }
+  .old ol {
+    margin: 0;
+    padding-left: 1.3rem;
+  }
+  .old li {
+    color: var(--ink-soft);
+    margin-bottom: 0.3rem;
+  }
+  .x {
+    margin-left: 0.6rem;
+    font: inherit;
+    font-size: 0.8rem;
+    border: none;
+    background: none;
+    color: var(--rust);
+    cursor: pointer;
+  }
+  .empty {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+  }
+  .finer {
+    display: grid;
+    gap: 0.6rem;
+  }
+  .row {
+    display: grid;
+    gap: 0.3rem 1rem;
+    align-items: center;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px dashed var(--line);
+  }
+  @media (min-width: 52rem) {
+    .row {
+      grid-template-columns: 1.4fr auto 1.2fr;
+    }
+  }
+  .q {
+    margin: 0;
+  }
+  .q b {
+    font-family: var(--display);
+    color: var(--rust);
+    margin-right: 0.3rem;
+  }
+  .q small {
+    display: block;
+    color: var(--ink-soft);
+  }
+  .marks {
+    display: flex;
+    gap: 0.8rem;
+  }
+  .marks label {
+    display: inline-flex;
+    gap: 0.25rem;
+    align-items: center;
+    font-size: 1.15rem;
+    cursor: pointer;
+  }
+  .fill {
+    line-height: 2.4;
+  }
+  .fill input {
+    width: min(16rem, 100%) !important;
+    display: inline-block;
+    margin: 0 0.3rem;
+  }
+  @media print {
+    :global(.top),
+    :global(.foot),
+    :global(.falling),
+    .crumb,
+    .actions,
+    .ideas,
+    .x,
+    .tip {
+      display: none !important;
+    }
+    .sec {
+      box-shadow: none;
+      break-inside: avoid;
+    }
+  }
+</style>

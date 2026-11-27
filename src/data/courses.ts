@@ -25,6 +25,8 @@ export interface Course {
   /** 帶這門課的森林住民 */
   guide: { img: "course-01" | "course-02" | "course-03" | "course-04"; alt: string; line: string };
   status: string;
+  /** 有工作坊教材的話，填入口網址（相對於網站根目錄） */
+  workshop?: string;
   lede: string;
   forWho: string[];
   takeaway: string[];
@@ -44,11 +46,12 @@ export const courses: Course[] = [
     sub: "從找文獻、讀文獻、寫論文到研究計畫書",
     tone: "ginkgo",
     guide: { img: "course-01", alt: "熊坐在書桌前，檯燈下讀書，旁邊堆滿書", line: "熊帶路：讀文獻這件事，牠最在行。" },
-    status: "籌備中・大綱已公開",
+    status: "兩天工作坊・第 1 站教材已上線",
+    workshop: "workshop/ai-research/",
     lede: "把 AI 放在研究流程裡對的位置：它幫你縮小問題、擴充檢索詞、整理筆記、檢查格式；判斷證據、下結論、負責任，還是你。",
     forWho: ["正在寫碩士論文或研究計畫的護理研究生", "要帶學生做實證報告的臨床教師", "想把讀文獻這件事變輕鬆的人"],
     takeaway: ["一題寫成 PICO 的研究問題", "一份可以重跑的檢索紀錄", "一個連著 Zotero 的 Obsidian 文獻庫", "一段用 APA 7 檢查過的文獻探討草稿"],
-    format: "六站，每站 90 分鐘；可以拆成六週的讀書會",
+    format: "兩天工作坊，一天三站，每站 90 分鐘；學員用 Claude 或 ChatGPT，題目自己找",
     modules: [
       {
         title: "把臨床疑問寫成 PICO",
