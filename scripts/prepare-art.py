@@ -6,6 +6,8 @@
     python3 scripts/prepare-art.py <原圖資料夾> public/img/forest
 投影插圖（每張都裁到主體）：
     python3 scripts/prepare-art.py <原圖資料夾> public/img/forest/s1 --trim
+深藍背景的插圖（第 2 站太空主題）：
+    python3 scripts/prepare-art.py <原圖資料夾> public/img/forest/s2 --bg 1d2740
 原圖資料夾裡放 hero.png、bear.png、rabbit.png、dog.png、bear-wave.png、dog-wave.png、
 course-01.png ～ course-04.png（檔名對照見 DESIGN.md）。
 """
@@ -43,9 +45,40 @@ def whiten(src, dst, max_side, crop=None, trim=False):
     img.save(dst, "WEBP", quality=84, method=6)
     return img.size, os.path.getsize(dst) // 1024, bg.round()
 
+def to_bg(src, dst, max_side, target):
+    """深色背景的插圖：把原圖的背景色校正成 target（例如投影的深藍），四邊羽化到 target。"""
+    im = Image.open(src).convert("RGB")
+    im.thumbnail((max_side, max_side), Image.LANCZOS)
+    a = np.asarray(im).astype(np.float32)
+    border = np.concatenate([a[:8].reshape(-1, 3), a[-8:].reshape(-1, 3), a[:, :8].reshape(-1, 3), a[:, -8:].reshape(-1, 3)])
+    bg = np.median(border, axis=0)
+    t = np.array(target, dtype=np.float32)
+    # 和背景差不多的地方直接換成目標色，越不像背景越保留原色
+    d = np.linalg.norm(a - bg, axis=2, keepdims=True)
+    k = np.clip((d - 10.0) / 40.0, 0, 1)
+    shifted = np.clip(a + (t - bg), 0, 255)
+    out = shifted * k + t * (1 - k)
+    h, w = out.shape[:2]
+    fx = np.minimum(np.arange(w), np.arange(w)[::-1]) / (w * 0.06)
+    fy = np.minimum(np.arange(h), np.arange(h)[::-1]) / (h * 0.06)
+    edge = np.clip(np.minimum(fy[:, None], fx[None, :]), 0, 1)[..., None]
+    out = out * edge + t * (1 - edge)
+    Image.fromarray(np.clip(out, 0, 255).astype(np.uint8)).save(dst, "WEBP", quality=84, method=6)
+    return im.size, os.path.getsize(dst) // 1024, bg.round()
+
+
 if __name__ == "__main__":
     s, o = sys.argv[1], sys.argv[2]
     os.makedirs(o, exist_ok=True)
+    if "--bg" in sys.argv:
+        # 深色背景插圖（例如第 2 站的太空主題）：--bg 1d2740
+        hexv = sys.argv[sys.argv.index("--bg") + 1].lstrip("#")
+        target = [int(hexv[i : i + 2], 16) for i in (0, 2, 4)]
+        for name in sorted(os.listdir(s)):
+            if name.lower().endswith(".png"):
+                stem = os.path.splitext(name)[0]
+                print(stem, to_bg(os.path.join(s, name), os.path.join(o, stem + ".webp"), 1400, target))
+        sys.exit(0)
     if "--trim" in sys.argv:
         # 投影用插圖：資料夾裡每一張 PNG 都校正、裁到主體、長邊縮到 1400px
         for name in sorted(os.listdir(s)):

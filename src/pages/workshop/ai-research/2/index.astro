@@ -1,0 +1,713 @@
+---
+import Base from "../../../../layouts/Base.astro";
+import { workshop, s2 } from "../../../../data/workshop-01";
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const root = `${base}workshop/${workshop.slug}/`;
+---
+
+<Base title={`第 2 站學習單｜${workshop.title}｜Bob 的學習森林`} description="第 2 站：找文獻，檢索式自己跑。網頁學習單，寫的內容只存在你自己的瀏覽器。" current="new">
+  <div class="wrap ws" data-ws>
+    <p class="crumb"><a href={root}>← 回工作坊</a></p>
+
+    <header class="ws-head">
+      <p class="eyebrow">第 2 站　學習單</p>
+      <h1>找文獻：檢索式自己跑</h1>
+      <p class="lede">在文獻宇宙裡找星星：每個 PICO 概念是一團星系，檢索式是你的星圖。帶走一張別人也能重跑的檢索紀錄表。這裡打的字只存在這台電腦的瀏覽器。</p>
+      <p class="actions">
+        <button type="button" class="btn btn-primary" data-print>存成 PDF／列印</button>
+        <button type="button" class="btn btn-quiet" data-clear>全部清除</button>
+        {s2.links.map((l) => <a class="btn btn-quiet" href={l.href} target="_blank" rel="noopener">{l.label} ↗</a>)}
+      </p>
+    </header>
+
+    <section class="card sec">
+      <h2><span class="n">1</span>你的研究問題</h2>
+      <p class="hint" data-from-s1></p>
+      <textarea rows="3" data-k="question" placeholder="把第 1 站寫好的研究問題貼在這裡"></textarea>
+    </section>
+
+    <section class="card sec">
+      <h2><span class="n">2</span>請 AI 列候選詞</h2>
+      <p class="hint">貼到 Claude 或 ChatGPT。它列的 MeSH 詞只是「可能」，下一步要到 MeSH Browser 確認。</p>
+      <pre class="prompt" data-out="syn"></pre>
+      <p class="actions">
+        <button type="button" class="btn btn-primary" data-copy="syn">複製提示詞</button>
+        <a class="btn btn-quiet" href="https://claude.ai/new" target="_blank" rel="noopener">開 Claude ↗</a>
+        <a class="btn btn-quiet" href="https://chatgpt.com/" target="_blank" rel="noopener">開 ChatGPT ↗</a>
+        <span class="copied" data-copied="syn" aria-live="polite"></span>
+      </p>
+    </section>
+
+    <section class="card sec">
+      <h2><span class="n">3</span>畫星圖：每個概念一團星系</h2>
+      <p class="hint">英文詞一行一個。MeSH 詞到 <a href="https://meshb.nlm.nih.gov/" target="_blank" rel="noopener">MeSH Browser</a> 確認過才填。同一團星系用 OR，星系之間用 AND。</p>
+      <div class="galaxies">
+        {
+          s2.concepts.map((c) => (
+            <div class="galaxy" data-g={c.k}>
+              <b>{c.label}</b>
+              <label>自由詞（一行一個）<textarea rows="3" data-k={`t-${c.k}`} placeholder={c.hint}></textarea></label>
+              <label>MeSH 詞（確認過的，一行一個）<textarea rows="2" data-k={`m-${c.k}`} placeholder="例如：Accidental Falls"></textarea></label>
+              <label class="inc"><input type="checkbox" data-k={`use-${c.k}`} checked={c.k !== "c"} />放進檢索式</label>
+            </div>
+          ))
+        }
+      </div>
+      <p class="sentence"><b>你的檢索式（PubMed）</b><code data-query>（填好星系，這裡會自動組起來）</code></p>
+      <p class="actions">
+        <button type="button" class="btn btn-quiet" data-copy="query">複製檢索式</button>
+        <a class="btn btn-primary" data-pubmed href="https://pubmed.ncbi.nlm.nih.gov/" target="_blank" rel="noopener">在 PubMed 打開 ↗</a>
+        <span class="copied" data-copied="query" aria-live="polite"></span>
+      </p>
+    </section>
+
+    <section class="card sec">
+      <h2><span class="n">4</span>檢索紀錄表</h2>
+      <p class="hint">每跑一次就記一列。別人照著最後一列重跑，應該要找到一樣的篇數。</p>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>日期</th><th>資料庫</th><th>檢索式</th><th>篇數</th><th>備註</th><th></th></tr></thead>
+          <tbody data-log></tbody>
+        </table>
+      </div>
+      <p class="actions">
+        <button type="button" class="btn btn-primary" data-add>把目前的檢索式記一列</button>
+      </p>
+    </section>
+
+    <section class="card sec">
+      <h2><span class="n">5</span>太多或太少？請 AI 建議怎麼調</h2>
+      <div class="tune">
+        <label>篇數<input data-k="n" inputmode="numeric" placeholder="例如 2380" /></label>
+        <label>我覺得<select data-k="feel"><option value="太多了">太多了</option><option value="太少了">太少了</option><option value="不確定有沒有漏掉重要的">不確定有沒有漏掉</option></select></label>
+      </div>
+      <pre class="prompt" data-out="tune"></pre>
+      <p class="actions">
+        <button type="button" class="btn btn-quiet" data-copy="tune">複製提示詞</button>
+        <span class="copied" data-copied="tune" aria-live="polite"></span>
+      </p>
+      <p class="tip">AI 的建議自己判斷要不要採用。改了檢索式，記得在紀錄表多記一列。</p>
+    </section>
+
+    <section class="card sec">
+      <h2><span class="n">6</span>假星星：AI 給的文獻，一篇一篇查</h2>
+      <p class="hint">示範時會一起做。想自己試的話，把提示詞丟給 AI，再把它給的每一篇拿去 PubMed 查。</p>
+      <pre class="prompt" data-out="fake"></pre>
+      <p class="actions">
+        <button type="button" class="btn btn-quiet" data-copy="fake">複製提示詞</button>
+        <span class="copied" data-copied="fake" aria-live="polite"></span>
+      </p>
+      <ol class="fakes">
+        {
+          [0, 1, 2, 3, 4].map((i) => (
+            <li>
+              <input data-k={`fk-${i}`} placeholder="AI 給的標題" />
+              <div class="checks">
+                {s2.fakeChecks.map((c, j) => (
+                  <label>
+                    <input type="checkbox" data-k={`fc-${i}-${j}`} />
+                    {c}
+                  </label>
+                ))}
+              </div>
+              <span class="verdict" data-verdict={i}></span>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="study">{s2.fakeStudy.text}<a href={s2.fakeStudy.href} target="_blank" rel="noopener">（{s2.fakeStudy.cite}）</a></p>
+    </section>
+
+    <section class="card sec">
+      <h2><span class="n">7</span>互看：別人重跑一次</h2>
+      <p class="hint">把你最後一列的檢索式給旁邊的人，請他在自己的電腦上跑。</p>
+      <div class="tune">
+        <label>對方跑出來的篇數<input data-k="peer-n" inputmode="numeric" /></label>
+        <label>不一樣的話，差在哪裡？<input data-k="peer-why" placeholder="引號、日期、篩選條件……" /></label>
+      </div>
+    </section>
+
+    <section class="card sec">
+      <h2><span class="n">8</span>帶到下一站：挑 3 篇</h2>
+      <p class="hint">跟你的 PICO 最接近的 3 篇，寫下 PMID。最好有一篇是隨機對照試驗或系統性回顧。第 3 站要把它們收進 Zotero。</p>
+      <div class="pmids">
+        {[0, 1, 2].map((i) => <label>第 {i + 1} 篇 PMID<input data-k={`pmid-${i}`} inputmode="numeric" placeholder="例如 37679503" /></label>)}
+      </div>
+    </section>
+  </div>
+</Base>
+
+<script>
+  import { s2 } from "../../../../data/workshop-01";
+  const KEY = "forest-ws01-s2";
+  let st: Record<string, any> = {};
+  try {
+    st = JSON.parse(localStorage.getItem(KEY) || "{}") || {};
+  } catch {
+    st = {};
+  }
+  if (!Array.isArray(st.log)) st.log = [];
+  const save = () => {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(st));
+    } catch {}
+  };
+  const $ = <T extends Element = HTMLElement>(s: string) => document.querySelector<T>(s)!;
+  const fields = Array.from(document.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>("[data-k]"));
+
+  // 第 1 站寫好的研究問題，自動帶進來
+  if (!st.question) {
+    try {
+      const a = JSON.parse(localStorage.getItem("forest-ws01-s1") || "{}");
+      const p = a.p || "", i = a.i || "", c = a.c || "", o = a.o || "";
+      let q = "";
+      if (a.type === "pico-q" && (p || i || o)) q = `${p}在${o}的情境中，${i}的經驗是什麼？`;
+      else if (p || i || c || o) q = `在${p}中，${i}相較於${c}，對${o}有沒有影響？`;
+      if (q) {
+        st.question = q;
+        $("[data-from-s1]").textContent = "已經從第 1 站帶入你的研究問題，可以再修改。";
+      }
+    } catch {}
+  }
+  if (!$("[data-from-s1]").textContent) $("[data-from-s1]").textContent = "第 1 站的學習單在同一台電腦上填過的話，會自動帶進來。";
+
+  fields.forEach((el) => {
+    const k = el.dataset.k!;
+    if (el instanceof HTMLInputElement && el.type === "checkbox") {
+      if (typeof st[k] === "boolean") el.checked = st[k];
+    } else if (typeof st[k] === "string") el.value = st[k];
+  });
+
+  const v = (k: string) => {
+    const el = document.querySelector<HTMLInputElement>(`[data-k="${k}"]`);
+    if (!el) return "";
+    return el.type === "checkbox" ? (el.checked ? "1" : "") : el.value.trim();
+  };
+  const lines = (k: string) =>
+    v(k)
+      .split(/\n+/)
+      .map((x) => x.trim())
+      .filter(Boolean);
+
+  const query = () => {
+    const groups = s2.concepts
+      .filter((c) => v(`use-${c.k}`))
+      .map((c) => {
+        const t = lines(`t-${c.k}`).map((w) => `"${w.replace(/"/g, "")}"[tiab]`);
+        const m = lines(`m-${c.k}`).map((w) => `"${w.replace(/"/g, "")}"[Mesh]`);
+        const all = [...m, ...t];
+        if (!all.length) return "";
+        return all.length > 1 ? `(${all.join(" OR ")})` : all[0];
+      })
+      .filter(Boolean);
+    return groups.join(" AND ");
+  };
+
+  const out = (k: string, text: string) => ($(`[data-out="${k}"]`).textContent = text);
+  const render = () => {
+    const q = v("question");
+    out("syn", s2.synonymPrompt.replace("{question}", q || "（先在第 1 步填好研究問題）"));
+    const qq = query();
+    $("[data-query]").textContent = qq || "（填好星系，這裡會自動組起來）";
+    $<HTMLAnchorElement>("[data-pubmed]").href = qq ? `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(qq)}` : "https://pubmed.ncbi.nlm.nih.gov/";
+    out("tune", s2.tunePrompt.replace("{query}", qq || "（先在第 3 步組好檢索式）").replace("{n}", v("n") || "＿＿").replace("{feel}", v("feel") || "太多了"));
+    out("fake", s2.fakePrompt.replace("{topic}", q || "你的研究問題"));
+
+    [0, 1, 2, 3, 4].forEach((i) => {
+      const el = $(`[data-verdict="${i}"]`);
+      const title = v(`fk-${i}`);
+      const n = s2.fakeChecks.filter((_, j) => v(`fc-${i}-${j}`)).length;
+      el.className = "verdict";
+      if (!title) el.textContent = "";
+      else if (n === s2.fakeChecks.length) (el.textContent = "真的星星"), el.classList.add("ok");
+      else if (!v(`fc-${i}-0`)) (el.textContent = "查不到：可能是假星星"), el.classList.add("bad");
+      else (el.textContent = `有 ${s2.fakeChecks.length - n} 項不對或還沒查`), el.classList.add("mid");
+    });
+
+    const tb = $("[data-log]");
+    tb.innerHTML = "";
+    (st.log as any[]).forEach((r, n) => {
+      const tr = document.createElement("tr");
+      const cells: [string, string][] = [
+        ["date", r.date],
+        ["db", r.db],
+        ["q", r.q],
+        ["n", r.n],
+        ["note", r.note],
+      ];
+      cells.forEach(([k, val]) => {
+        const td = document.createElement("td");
+        const inp = document.createElement(k === "q" ? "textarea" : "input") as HTMLInputElement;
+        inp.value = val || "";
+        if (k === "q") (inp as any).rows = 2;
+        inp.addEventListener("input", () => {
+          st.log[n][k] = inp.value;
+          save();
+        });
+        td.append(inp);
+        tr.append(td);
+      });
+      const td = document.createElement("td");
+      const x = document.createElement("button");
+      x.type = "button";
+      x.className = "x";
+      x.textContent = "刪除";
+      x.addEventListener("click", () => {
+        st.log.splice(n, 1);
+        save();
+        render();
+      });
+      td.append(x);
+      tr.append(td);
+      tb.append(tr);
+    });
+  };
+
+  fields.forEach((el) => {
+    const h = () => {
+      st[el.dataset.k!] = el instanceof HTMLInputElement && el.type === "checkbox" ? el.checked : el.value;
+      save();
+      render();
+    };
+    el.addEventListener("input", h);
+    el.addEventListener("change", h);
+  });
+
+  $("[data-add]").addEventListener("click", () => {
+    const d = new Date();
+    const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    st.log.push({ date, db: "PubMed", q: query(), n: v("n"), note: "" });
+    save();
+    render();
+  });
+
+  document.querySelectorAll<HTMLButtonElement>("[data-copy]").forEach((b) =>
+    b.addEventListener("click", async () => {
+      const which = b.dataset.copy!;
+      const text = (which === "query" ? $("[data-query]") : $(`[data-out="${which}"]`)).textContent || "";
+      const o = $(`[data-copied="${which}"]`);
+      try {
+        await navigator.clipboard.writeText(text);
+        o.textContent = "已複製";
+      } catch {
+        o.textContent = "請手動選取上面的文字複製";
+      }
+      setTimeout(() => (o.textContent = ""), 2500);
+    }),
+  );
+  $("[data-print]").addEventListener("click", () => window.print());
+  $("[data-clear]").addEventListener("click", () => {
+    if (!confirm("確定要清除這一站寫的所有內容嗎？")) return;
+    st = { log: [] };
+    save();
+    fields.forEach((el) => {
+      if (el instanceof HTMLInputElement && el.type === "checkbox") el.checked = el.dataset.k!.startsWith("use-") && el.dataset.k !== "use-c";
+      else el.value = el instanceof HTMLSelectElement ? "太多了" : "";
+    });
+    render();
+  });
+  render();
+</script>
+
+<style>
+  .crumb {
+    margin: 1.4rem 0 0.4rem;
+  }
+  .ws-head h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 0.2rem 0 0.4rem;
+  }
+  .lede {
+    color: var(--ink-soft);
+    max-width: 44rem;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: center;
+    margin: 0.8rem 0;
+  }
+  .rules {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 1.5rem;
+    display: grid;
+    gap: 0.4rem;
+  }
+  @media (min-width: 52rem) {
+    .rules {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .rules li {
+    background: #b4552d14;
+    border-left: 4px solid var(--rust);
+    padding: 0.5rem 0.8rem;
+    border-radius: 0 10px 10px 0;
+    font-size: 0.95rem;
+  }
+  .rules b {
+    display: block;
+    color: var(--rust-deep);
+  }
+  .sec {
+    padding: clamp(1.1rem, 3vw, 1.8rem);
+    margin-bottom: 1.2rem;
+  }
+  .sec h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.35rem;
+  }
+  .n {
+    flex: none;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-family: var(--display);
+    font-size: 1rem;
+    background: var(--ginkgo);
+    border: 2px solid var(--ginkgo-deep);
+  }
+  .hint {
+    color: var(--ink-soft);
+  }
+  textarea,
+  input:not([type="radio"]):not([type="checkbox"]) {
+    font: inherit;
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    background: #fffdf6;
+    color: var(--ink);
+  }
+  textarea:focus,
+  input:focus {
+    outline: 3px solid #3f6b4d55;
+    border-color: var(--moss);
+  }
+  .moments {
+    margin: 0;
+    padding-left: 1.3rem;
+    display: grid;
+    gap: 1rem;
+  }
+  .moments > li > label:first-child {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  .pick {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.3rem;
+    color: var(--moss-deep);
+    cursor: pointer;
+  }
+  .ideas {
+    margin-top: 1rem;
+  }
+  .ideas summary {
+    cursor: pointer;
+    color: var(--rust-deep);
+  }
+  .types {
+    display: grid;
+    gap: 0.7rem;
+  }
+  @media (min-width: 46rem) {
+    .types {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .type {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    padding: 0.8rem 1rem;
+    border: 2px solid var(--line);
+    border-radius: 14px;
+    cursor: pointer;
+  }
+  .type:has(input:checked) {
+    border-color: var(--moss);
+    background: #3f6b4d12;
+  }
+  .type b,
+  .type small {
+    display: block;
+  }
+  .type small {
+    color: var(--ink-soft);
+  }
+  .prompt {
+    white-space: pre-wrap;
+    font-family: var(--sans);
+    font-size: 0.98rem;
+    background: #fffdf6;
+    border: 1.5px dashed var(--line);
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    margin: 0.6rem 0;
+  }
+  .copied {
+    color: var(--moss-deep);
+    font-weight: 700;
+  }
+  .tip {
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+  }
+  .grid4 {
+    display: grid;
+    gap: 0.8rem;
+  }
+  @media (min-width: 46rem) {
+    .grid4 {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .cell b {
+    display: block;
+    color: var(--moss-deep);
+    margin-bottom: 0.2rem;
+  }
+  .sentence {
+    margin: 1.2rem 0 0.4rem;
+    padding: 0.8rem 1rem;
+    background: #f3cf6340;
+    border-left: 5px solid var(--ginkgo);
+    border-radius: 0 12px 12px 0;
+    font-size: 1.15rem;
+  }
+  .sentence b {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--rust-deep);
+  }
+  .old h3 {
+    font-size: 1.05rem;
+    margin-top: 0.8rem;
+  }
+  .old ol {
+    margin: 0;
+    padding-left: 1.3rem;
+  }
+  .old li {
+    color: var(--ink-soft);
+    margin-bottom: 0.3rem;
+  }
+  .x {
+    margin-left: 0.6rem;
+    font: inherit;
+    font-size: 0.8rem;
+    border: none;
+    background: none;
+    color: var(--rust);
+    cursor: pointer;
+  }
+  .empty {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+  }
+  .finer {
+    display: grid;
+    gap: 0.6rem;
+  }
+  .row {
+    display: grid;
+    gap: 0.3rem 1rem;
+    align-items: center;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px dashed var(--line);
+  }
+  @media (min-width: 52rem) {
+    .row {
+      grid-template-columns: 1.4fr auto 1.2fr;
+    }
+  }
+  .q {
+    margin: 0;
+  }
+  .q b {
+    font-family: var(--display);
+    color: var(--rust);
+    margin-right: 0.3rem;
+  }
+  .q small {
+    display: block;
+    color: var(--ink-soft);
+  }
+  .marks {
+    display: flex;
+    gap: 0.8rem;
+  }
+  .marks label {
+    display: inline-flex;
+    gap: 0.25rem;
+    align-items: center;
+    font-size: 1.15rem;
+    cursor: pointer;
+  }
+  .fill {
+    line-height: 2.4;
+  }
+  .fill input {
+    width: min(16rem, 100%) !important;
+    display: inline-block;
+    margin: 0 0.3rem;
+  }
+  .galaxies {
+    display: grid;
+    gap: 0.9rem;
+  }
+  @media (min-width: 52rem) {
+    .galaxies {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .galaxy {
+    border: 2px dashed var(--line);
+    border-radius: 14px;
+    padding: 0.8rem 1rem;
+    display: grid;
+    gap: 0.4rem;
+  }
+  .galaxy > b {
+    color: var(--moss-deep);
+  }
+  .galaxy label {
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+  }
+  .inc {
+    display: inline-flex;
+    gap: 0.4rem;
+    align-items: center;
+  }
+  .sentence code {
+    display: block;
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    font-size: 0.92rem;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+  .tbl {
+    overflow-x: auto;
+  }
+  .tbl table {
+    width: 100%;
+    min-width: 40rem;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+  }
+  .tbl th,
+  .tbl td {
+    border-bottom: 1px dashed var(--line);
+    padding: 0.3rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  .tbl th:nth-child(1) { width: 7rem; }
+  .tbl th:nth-child(2) { width: 6rem; }
+  .tbl th:nth-child(4) { width: 5rem; }
+  .tbl td input,
+  .tbl td textarea {
+    padding: 0.3rem 0.4rem !important;
+    font-size: 0.9rem;
+  }
+  .tune {
+    display: grid;
+    gap: 0.6rem;
+  }
+  @media (min-width: 46rem) {
+    .tune {
+      grid-template-columns: 1fr 2fr;
+    }
+  }
+  .tune label {
+    display: grid;
+    gap: 0.2rem;
+    color: var(--ink-soft);
+  }
+  select {
+    font: inherit;
+    padding: 0.5rem;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    background: #fffdf6;
+  }
+  .fakes {
+    margin: 0.8rem 0 0;
+    padding-left: 1.3rem;
+    display: grid;
+    gap: 0.8rem;
+  }
+  .checks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.9rem;
+    margin-top: 0.3rem;
+    font-size: 0.92rem;
+  }
+  .checks label {
+    display: inline-flex;
+    gap: 0.3rem;
+    align-items: center;
+  }
+  .verdict {
+    display: inline-block;
+    margin-top: 0.3rem;
+    font-weight: 700;
+    font-size: 0.92rem;
+  }
+  .verdict.ok { color: var(--moss-deep); }
+  .verdict.bad { color: var(--rust-deep); }
+  .verdict.mid { color: var(--ginkgo-deep); }
+  .study {
+    margin-top: 1rem;
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    background: #b4552d10;
+    border-left: 4px solid var(--rust);
+    padding: 0.5rem 0.8rem;
+    border-radius: 0 10px 10px 0;
+  }
+  .pmids {
+    display: grid;
+    gap: 0.6rem;
+  }
+  @media (min-width: 46rem) {
+    .pmids {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .pmids label {
+    display: grid;
+    gap: 0.2rem;
+    color: var(--ink-soft);
+  }
+  @media print {
+    :global(.top),
+    :global(.foot),
+    :global(.falling),
+    .crumb,
+    .actions,
+    .ideas,
+    .x,
+    .tip {
+      display: none !important;
+    }
+    .sec {
+      box-shadow: none;
+      break-inside: avoid;
+    }
+  }
+</style>

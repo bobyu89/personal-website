@@ -22,6 +22,11 @@ const DECKS = [
     out: "public/files/workshop-01/s1-slides",
     title: "第 1 站　把臨床疑問寫成 PICO",
   },
+  {
+    url: "/workshop/ai-research/2/slides/",
+    out: "public/files/workshop-01/s2-slides",
+    title: "第 2 站　找文獻：檢索式自己跑",
+  },
 ];
 
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
