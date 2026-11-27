@@ -198,3 +198,38 @@ main,
   position: relative;
   z-index: 1;
 }
+
+/* 森林住民的小動作：眨眼、搖尾巴 */
+@media (prefers-reduced-motion: no-preference) {
+  .critter .eye {
+    animation: blink 5s infinite;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .critter.rabbit .eye {
+    animation-delay: 1.3s;
+  }
+  .critter.dog .eye {
+    animation-delay: 2.6s;
+  }
+  .critter.dog .tail {
+    animation: wag 0.9s ease-in-out infinite alternate;
+    transform-box: fill-box;
+    transform-origin: 0% 100%;
+  }
+}
+@keyframes blink {
+  0%,
+  92%,
+  100% {
+    scale: 1 1;
+  }
+  95% {
+    scale: 1 0.1;
+  }
+}
+@keyframes wag {
+  to {
+    rotate: 14deg;
+  }
+}

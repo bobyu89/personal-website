@@ -4,6 +4,7 @@
  * 樹冠的葉子在建置時用固定種子的亂數排好，所以每次建置的樣子都一樣。
  */
 import { site } from "../data/site";
+import Critter from "./Critter.astro";
 
 let seed = 20261127;
 const rand = () => {
@@ -26,7 +27,7 @@ const canopy = Array.from({ length: 190 }, () => {
 }).sort((p, q) => +p.y - +q.y);
 ---
 
-<svg class="hero-art" viewBox="0 0 600 560" role="img" aria-label="一棵金黃的銀杏樹，樹下有一隻圍著綠圍巾、正在讀書的貓頭鷹，旁邊立著寫著課程與工具的路標，天上有兩隻綠色小鳥">
+<svg class="hero-art" viewBox="0 0 600 560" role="img" aria-label="一棵金黃的銀杏樹，樹下有一隻圍著黃圍巾、正在讀書的熊；路標旁的兔子撐著一片銀杏葉當傘，一隻小狗叼著信跑過來，天上有兩隻綠色小鳥">
   <defs>
     <path id="gl" d="M0 -14 C-9 -14 -21 -21 -24 -34 C-16 -42 -6 -42 -2 -37 L0 -31 L2 -37 C6 -42 16 -42 24 -34 C21 -21 9 -14 0 -14 Z M-1 -14 L-1 0 L1 0 L1 -14 Z"></path>
     <linearGradient id="hill" x1="0" y1="0" x2="0" y2="1">
@@ -99,32 +100,10 @@ const canopy = Array.from({ length: 190 }, () => {
     <text x="0" y="52" class="sign" text-anchor="middle">← 工具</text>
   </g>
 
-  <!-- 貓頭鷹與書 -->
-  <g class="owl" transform="translate(408 420)">
-    <ellipse cx="0" cy="70" rx="46" ry="8" fill="#7d5c2c" opacity=".35"></ellipse>
-    <path d="M-34 20 C-38 -16 -24 -40 0 -40 C24 -40 38 -16 34 20 C30 56 18 68 0 68 C-18 68 -30 56 -34 20 Z" fill="#8a643f"></path>
-    <path d="M-30 -30 L-26 -52 L-12 -38 Z M30 -30 L26 -52 L12 -38 Z" fill="#8a643f"></path>
-    <ellipse cx="0" cy="34" rx="22" ry="28" fill="#ead6ad"></ellipse>
-    <g stroke="#c8a873" stroke-width="2" fill="none" stroke-linecap="round">
-      <path d="M-10 24 q4 4 8 0 M4 24 q4 4 8 0 M-12 36 q4 4 8 0 M2 36 q4 4 8 0 M-6 48 q4 4 8 0"></path>
-    </g>
-    <circle cx="-13" cy="-14" r="13" fill="#fbf5e6" stroke="#5e4128" stroke-width="2"></circle>
-    <circle cx="13" cy="-14" r="13" fill="#fbf5e6" stroke="#5e4128" stroke-width="2"></circle>
-    <circle class="pupil" cx="-11" cy="-9" r="5.5" fill="#2a1c12"></circle>
-    <circle class="pupil" cx="15" cy="-9" r="5.5" fill="#2a1c12"></circle>
-    <path d="M-4 -4 L4 -4 L0 4 Z" fill="#d8932c"></path>
-    <!-- 圍巾 -->
-    <path d="M-30 6 C-12 16 12 16 30 6 L30 14 C12 24 -12 24 -30 14 Z" fill="#3f6b4d"></path>
-    <path d="M14 16 L22 40 L12 40 L8 18 Z" fill="#2d5240"></path>
-    <!-- 書 -->
-    <g transform="translate(0 46)">
-      <path d="M-30 -6 C-16 -12 -4 -10 0 -4 C4 -10 16 -12 30 -6 L30 16 C16 10 4 12 0 18 C-4 12 -16 10 -30 16 Z" fill="#fbf5e6" stroke="#7a5233" stroke-width="2"></path>
-      <path d="M0 -4 V18" stroke="#7a5233" stroke-width="1.6"></path>
-      <path d="M-24 0 h16 M-24 6 h14 M8 0 h16 M8 6 h12" stroke="#c8a873" stroke-width="1.6"></path>
-    </g>
-    <path d="M-34 30 C-44 40 -40 54 -28 52" fill="#8a643f"></path>
-    <path d="M34 30 C44 40 40 54 28 52" fill="#8a643f"></path>
-  </g>
+  <!-- 森林住民：熊在樹下讀書、兔子撐著銀杏葉站在路標旁、狗叼著信跑來 -->
+  <Critter kind="bear" prop="book" x={404} y={418} scale={1.05} />
+  <Critter kind="rabbit" prop="leaf" x={238} y={446} scale={0.72} class="hop" />
+  <Critter kind="dog" prop="letter" x={520} y={458} scale={0.8} flip />
 
   <!-- 地上的落葉 -->
   <g>
@@ -168,8 +147,8 @@ const canopy = Array.from({ length: 190 }, () => {
     .b2 {
       animation-delay: -1.4s;
     }
-    .owl .pupil {
-      animation: read 6s ease-in-out infinite;
+    :global(.hop) {
+      animation: hop 4s ease-in-out infinite;
     }
     .canopy {
       transform-origin: 300px 340px;
@@ -186,15 +165,17 @@ const canopy = Array.from({ length: 190 }, () => {
       translate: 0 -7px;
     }
   }
-  @keyframes read {
+  @keyframes hop {
     0%,
-    40%,
+    70%,
     100% {
       translate: 0 0;
     }
-    55%,
     80% {
-      translate: -3px 2px;
+      translate: 0 -10px;
+    }
+    90% {
+      translate: 0 0;
     }
   }
   @keyframes sway {
