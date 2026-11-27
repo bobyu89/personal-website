@@ -107,6 +107,8 @@ const askShort = s1.askPrompt.replace("{moment}", "＿＿＿＿＿＿");
       <span data-count>1 / 7</span>
       <button type="button" data-next aria-label="下一頁">→</button>
       <button type="button" data-full aria-label="全螢幕">全螢幕</button>
+      <a href={`${base}files/workshop-01/s1-slides.pdf`} download="第1站_把臨床疑問寫成PICO.pdf">下載 PDF</a>
+      <a href={`${base}files/workshop-01/s1-slides.pptx`} download="第1站_把臨床疑問寫成PICO.pptx">下載 PPT</a>
     </nav>
 
     <script>
@@ -158,7 +160,7 @@ const askShort = s1.askPrompt.replace("{moment}", "＿＿＿＿＿＿");
         justify-content: center;
         padding: 5vh 6vw 9vh;
         background-color: var(--kraft);
-        font-size: clamp(1rem, 2.1vw, 1.7rem);
+        font-size: clamp(1rem, min(2.1vw, 3.7vh), 3rem);
       }
       .slide.on {
         display: flex;
@@ -360,6 +362,15 @@ const askShort = s1.askPrompt.replace("{moment}", "＿＿＿＿＿＿");
       .hud:hover {
         opacity: 1;
       }
+      .hud a {
+        font: inherit;
+        color: var(--ink);
+        text-decoration: none;
+        border: 1.5px solid var(--line);
+        background: var(--paper);
+        border-radius: 999px;
+        padding: 0.2rem 0.7rem;
+      }
       .hud button {
         font: inherit;
         border: 1.5px solid var(--line);
@@ -382,6 +393,38 @@ const askShort = s1.askPrompt.replace("{moment}", "＿＿＿＿＿＿");
         .slide {
           overflow-y: auto;
           justify-content: flex-start;
+        }
+      }
+      /* 列印／匯出 PDF：每一頁一張 1920×1080 */
+      @media print {
+        @page {
+          size: 1920px 1080px;
+          margin: 0;
+        }
+        html,
+        body {
+          height: auto;
+          overflow: visible;
+        }
+        .hud {
+          display: none !important;
+        }
+        .slide {
+          display: flex !important;
+          position: relative;
+          inset: auto;
+          width: 1920px;
+          height: 1080px;
+          padding: 54px 115px 97px;
+          font-size: 40px;
+          animation: none !important;
+          break-after: page;
+          overflow: hidden;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        .art {
+          max-height: 756px;
         }
       }
     </style>

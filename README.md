@@ -35,6 +35,20 @@ npm run dev
 
 開啟 http://localhost:4321 預覽；`npm run build` 輸出到 `dist/`。
 
+## 投影下載檔（PDF／PPT）
+
+投影頁右下角的「下載 PDF」「下載 PPT」連到 `public/files/` 裡預先匯出的檔案。改了投影內容或插圖後，要重新匯出一次：
+
+```bash
+npm run build
+```
+
+```bash
+npm run export:decks
+```
+
+要匯出哪些投影，寫在 `scripts/export-deck.cjs` 的 `DECKS`。PPT 每一頁是一張圖，頁面上的文字放在備忘稿。
+
 ## 部署
 
 合併到 `main` 後，`.github/workflows/deploy.yml` 會自動建置並發佈。
