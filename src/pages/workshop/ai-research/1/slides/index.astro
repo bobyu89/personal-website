@@ -111,7 +111,7 @@ const askShort = s1.askPrompt.replace("{moment}", "＿＿＿＿＿＿");
           <div>
             <p class="eyebrow">80–90 分　收尾</p>
             <h2>帶到下一站</h2>
-            <p class="big">AI 在這一站幫我的地方是＿＿＿，<br />我自己決定的是＿＿＿。</p>
+            <p class="big">AI 在這一站幫我的地方是<span class="nb">＿＿＿，</span><br />我自己決定的是<span class="nb">＿＿＿。</span></p>
             <p class="foot-note">下一站：你的 P、I、C、O，每一個都會變成檢索詞。</p>
           </div>
           <img class="art" src={art("07-next")} alt="熊、兔子、狗一起走向下一個路標" />
@@ -399,6 +399,9 @@ const askShort = s1.askPrompt.replace("{moment}", "＿＿＿＿＿＿");
         color: var(--ink-soft);
         font-size: 0.85em;
       }
+      .nb {
+        white-space: nowrap;
+      }
       .big {
         font-size: 1.4em;
         line-height: 1.7;
@@ -435,6 +438,9 @@ const askShort = s1.askPrompt.replace("{moment}", "＿＿＿＿＿＿");
         cursor: pointer;
       }
       @media (max-width: 48rem) {
+        [data-full] {
+          display: none;
+        }
         .two,
         .days,
         .rules,

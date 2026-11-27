@@ -7,7 +7,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "export:decks": "node scripts/export-deck.cjs"
+    "export:decks": "node scripts/export-deck.cjs",
+    "check:mobile": "node scripts/check-mobile.cjs"
   },
   "dependencies": {
     "@fontsource/iansui": "^5.3.1",
