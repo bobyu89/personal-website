@@ -1,9 +1,8 @@
 ---
 /** 背景慢慢飄落的銀杏葉。純裝飾；減少動態時不顯示。 */
-import Leaf from "./Leaf.astro";
-const tones = ["ginkgo", "amber", "ginkgo", "rust", "ginkgo", "amber", "moss", "ginkgo"] as const;
-const leaves = tones.map((tone, i) => ({
-  tone,
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const leaves = Array.from({ length: 8 }, (_, i) => ({
   left: (i * 13 + 5) % 100,
   delay: -(i * 3.7),
   dur: 16 + ((i * 5) % 9),
@@ -15,7 +14,7 @@ const leaves = tones.map((tone, i) => ({
   {
     leaves.map((l) => (
       <span style={`left:${l.left}%;animation-delay:${l.delay}s;animation-duration:${l.dur}s`}>
-        <Leaf tone={l.tone} size={`${l.size}rem`} />
+        <img src={`${base}img/forest/leaf.webp`} alt="" width="197" height="184" style={`width:${l.size * 1.1}rem;height:auto`} />
       </span>
     ))
   }
@@ -27,7 +26,7 @@ const leaves = tones.map((tone, i) => ({
     inset: 0;
     pointer-events: none;
     overflow: hidden;
-    z-index: 0;
+    z-index: -1;
   }
   span {
     position: absolute;

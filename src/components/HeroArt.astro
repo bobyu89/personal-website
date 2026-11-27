@@ -1,186 +1,62 @@
 ---
 /**
- * 首頁插畫：一棵銀杏樹、一隻在樹下讀書的貓頭鷹、路標、兩隻綠色小鳥。全部是原創的 SVG。
- * 樹冠的葉子在建置時用固定種子的亂數排好，所以每次建置的樣子都一樣。
+ * 首頁主視覺：Bob 用 AI 繪圖生成的銀杏樹與三位森林住民（public/img/forest/hero.webp）。
+ * 弧形標語與路標上的字用網頁文字疊上去（AI 寫的字常出錯，也方便日後修改）。
  */
+import Pic from "./Pic.astro";
 import { site } from "../data/site";
-import Critter from "./Critter.astro";
-
-let seed = 20261127;
-const rand = () => {
-  seed = (seed * 1103515245 + 12345) % 2147483648;
-  return seed / 2147483648;
-};
-const palette = ["#f0c348", "#e8b53d", "#dca333", "#f3cf63", "#d8932c", "#eab84a"];
-const canopy = Array.from({ length: 190 }, () => {
-  const a = rand() * Math.PI * 2;
-  const r = Math.sqrt(rand());
-  const x = 300 + Math.cos(a) * r * 185;
-  const y = 232 + Math.sin(a) * r * 112 - (1 - r) * 8;
-  return {
-    x: x.toFixed(1),
-    y: y.toFixed(1),
-    s: (0.2 + rand() * 0.13).toFixed(3),
-    rot: Math.round(rand() * 360),
-    c: palette[Math.floor(rand() * palette.length)],
-  };
-}).sort((p, q) => +p.y - +q.y);
 ---
 
-<svg class="hero-art" viewBox="0 0 600 560" role="img" aria-label="一棵金黃的銀杏樹，樹下有一隻圍著黃圍巾、正在讀書的熊；路標旁的兔子撐著一片銀杏葉當傘，一隻小狗叼著信跑過來，天上有兩隻綠色小鳥">
-  <defs>
-    <path id="gl" d="M0 -14 C-9 -14 -21 -21 -24 -34 C-16 -42 -6 -42 -2 -37 L0 -31 L2 -37 C6 -42 16 -42 24 -34 C21 -21 9 -14 0 -14 Z M-1 -14 L-1 0 L1 0 L1 -14 Z"></path>
-    <linearGradient id="hill" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#c9a24c"></stop>
-      <stop offset=".55" stop-color="#b48a3c"></stop>
-      <stop offset="1" stop-color="#9c7533"></stop>
-    </linearGradient>
-    <radialGradient id="glow" cx=".5" cy=".45" r=".6">
-      <stop offset="0" stop-color="#fff3c4" stop-opacity=".9"></stop>
-      <stop offset="1" stop-color="#fff3c4" stop-opacity="0"></stop>
-    </radialGradient>
-    <path id="arc" d="M 20 138 Q 300 -40 580 138"></path>
-  </defs>
-
-  <!-- 弧形標語 -->
-  <text class="arc-text" font-size="22"><textPath href="#arc" startOffset="50%" text-anchor="middle">{site.motto}</textPath></text>
-
-  <!-- 雲 -->
-  <g fill="#fbf5e6" opacity=".95">
-    <path class="cloud c1" d="M40 210 c0 -14 14 -22 26 -16 c6 -14 30 -14 36 2 c14 -2 22 8 18 18 h-74 c-6 0 -6 -4 -6 -4 Z"></path>
-    <path class="cloud c2" d="M470 170 c0 -12 12 -20 24 -14 c6 -12 28 -12 33 2 c13 -2 20 7 16 16 h-68 c-5 0 -5 -4 -5 -4 Z"></path>
-    <path class="cloud c3" d="M500 330 c0 -10 10 -16 19 -11 c5 -10 22 -10 26 2 c10 -1 15 6 12 12 h-52 c-4 0 -5 -3 -5 -3 Z"></path>
-  </g>
-
-  <!-- 綠色小鳥 -->
-  <g class="bird b1" transform="translate(120 150) rotate(-12)">
-    <path d="M0 0 C8 -12 26 -12 32 -2 C24 6 8 8 0 0 Z" fill="#3f6b4d"></path>
-    <path d="M14 -6 C18 -20 30 -24 34 -20 C30 -12 22 -6 14 -6 Z" fill="#2d5240"></path>
-    <path d="M32 -2 L40 -4 L33 2 Z" fill="#d8932c"></path>
-    <circle cx="27" cy="-5" r="1.6" fill="#2a1c12"></circle>
-  </g>
-  <g class="bird b2" transform="translate(560 232) rotate(10) scale(-0.8 0.8)">
-    <path d="M0 0 C8 -12 26 -12 32 -2 C24 6 8 8 0 0 Z" fill="#3f6b4d"></path>
-    <path d="M14 -6 C18 -20 30 -24 34 -20 C30 -12 22 -6 14 -6 Z" fill="#2d5240"></path>
-    <path d="M32 -2 L40 -4 L33 2 Z" fill="#d8932c"></path>
-    <circle cx="27" cy="-5" r="1.6" fill="#2a1c12"></circle>
-  </g>
-
-  <!-- 山丘 -->
-  <ellipse cx="300" cy="250" rx="250" ry="170" fill="url(#glow)"></ellipse>
-  <path d="M14 500 C70 418 190 384 300 384 C420 384 540 420 588 500 C600 524 560 548 470 554 C360 562 240 562 130 554 C40 548 0 526 14 500 Z" fill="url(#hill)"></path>
-  <path d="M20 512 C120 492 220 500 300 510 C390 520 500 500 584 512 C578 534 540 548 470 554 C360 562 240 562 130 554 C60 548 24 532 20 512 Z" fill="#a37b37" opacity=".45"></path>
-
-  <!-- 樹幹與枝 -->
-  <g fill="none" stroke="#6e4a2c" stroke-linecap="round">
-    <path d="M300 396 C298 356 302 320 300 268" stroke-width="22"></path>
-    <path d="M300 320 C276 300 256 292 232 288" stroke-width="9"></path>
-    <path d="M302 300 C326 282 352 276 376 278" stroke-width="9"></path>
-    <path d="M300 280 C292 258 296 240 288 222" stroke-width="7"></path>
-  </g>
-
-  <!-- 樹冠 -->
-  <ellipse cx="300" cy="236" rx="196" ry="118" fill="#d9a63a" opacity=".55"></ellipse>
-  <g class="canopy">
-    {canopy.map((p) => <use href="#gl" transform={`translate(${p.x} ${p.y}) rotate(${p.rot}) scale(${p.s * 4})`} fill={p.c} />)}
-  </g>
-
-  <!-- 灌木帶 -->
-  <path
-    d="M212 404 c6 -18 22 -20 30 -10 c6 -16 26 -18 32 -4 c8 -14 28 -14 34 0 c8 -14 30 -12 34 4 c10 -10 26 -6 28 10 Z"
-    fill="#3f6b4d"></path>
-  <path d="M226 404 c4 -10 14 -12 20 -4 M262 400 c4 -10 16 -10 20 0 M300 398 c4 -10 18 -10 22 0 M338 400 c4 -10 16 -8 20 2" stroke="#2d5240" stroke-width="2" fill="none"></path>
-
-  <!-- 路標 -->
-  <g transform="translate(118 404)">
-    <rect x="-4" y="-6" width="8" height="78" rx="3" fill="#7a5233"></rect>
-    <path d="M-48 2 H40 L54 14 L40 26 H-48 Z" fill="#e9d2a2" stroke="#7a5233" stroke-width="2.5"></path>
-    <text x="-2" y="20" class="sign" text-anchor="middle">課程 →</text>
-    <path d="M48 34 H-40 L-54 46 L-40 58 H48 Z" fill="#e9d2a2" stroke="#7a5233" stroke-width="2.5"></path>
-    <text x="0" y="52" class="sign" text-anchor="middle">← 工具</text>
-  </g>
-
-  <!-- 森林住民：熊在樹下讀書、兔子撐著銀杏葉站在路標旁、狗叼著信跑來 -->
-  <Critter kind="bear" prop="book" x={404} y={418} scale={1.05} />
-  <Critter kind="rabbit" prop="leaf" x={238} y={446} scale={0.72} class="hop" />
-  <Critter kind="dog" prop="letter" x={520} y={458} scale={0.8} flip />
-
-  <!-- 地上的落葉 -->
-  <g>
-    <use href="#gl" transform="translate(210 470) rotate(-60) scale(.7)" fill="#e8b53d"></use>
-    <use href="#gl" transform="translate(500 500) rotate(40) scale(.8)" fill="#d8932c"></use>
-    <use href="#gl" transform="translate(60 520) rotate(110) scale(.75)" fill="#f0c348"></use>
-    <use href="#gl" transform="translate(330 530) rotate(200) scale(.65)" fill="#c4643a"></use>
-  </g>
-</svg>
+<div class="hero-art">
+  <svg class="arc" viewBox="0 0 600 120" aria-hidden="true">
+    <path id="arc" d="M 30 116 Q 300 -24 570 116" fill="none"></path>
+    <text font-size="27"><textPath href="#arc" startOffset="50%" text-anchor="middle">{site.motto}</textPath></text>
+  </svg>
+  <div class="stage">
+    <Pic
+      name="hero"
+      eager
+      alt="一棵金黃的銀杏大樹下，穿綠毛衣的熊靠著樹幹讀書；穿芥末黃開襟衫的兔子撐著一片銀杏葉，站在路標旁；圍紅圍巾、穿吊帶褲的小狗拿著信跑過來；天上有兩隻綠色小鳥，銀杏葉在空中飄"
+    />
+    <span class="sign s1" aria-hidden="true">課程 →</span>
+    <span class="sign s2" aria-hidden="true">← 工具</span>
+  </div>
+</div>
 
 <style>
   .hero-art {
-    width: 100%;
-    height: auto;
+    position: relative;
+  }
+  .arc {
+    display: block;
+    width: 92%;
+    margin: 0 auto -4%;
     overflow: visible;
   }
-  .arc-text {
-    font-family: var(--display);
-    fill: var(--rust);
-    letter-spacing: 0.02em;
+  .arc text {
+    font-family: var(--sans);
+    fill: #9a5a32;
+    letter-spacing: 0.12em;
+  }
+  .stage {
+    position: relative;
+    container-type: inline-size;
   }
   .sign {
-    font-family: var(--sans);
-    font-size: 15px;
-    font-weight: 700;
-    fill: #5a3a22;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    font-size: 2.15cqw;
+    color: #5a3a22;
+    text-shadow: 0 0 3px #f3dcae, 0 0 6px #f3dcae;
+    white-space: nowrap;
+    pointer-events: none;
   }
-  @media (prefers-reduced-motion: no-preference) {
-    .cloud {
-      animation: drift 18s ease-in-out infinite alternate;
-    }
-    .c2 {
-      animation-duration: 23s;
-    }
-    .c3 {
-      animation-duration: 15s;
-    }
-    .bird {
-      animation: bob 3.2s ease-in-out infinite;
-    }
-    .b2 {
-      animation-delay: -1.4s;
-    }
-    :global(.hop) {
-      animation: hop 4s ease-in-out infinite;
-    }
-    .canopy {
-      transform-origin: 300px 340px;
-      animation: sway 9s ease-in-out infinite;
-    }
+  .s1 {
+    left: 80.6%;
+    top: 61.9%;
   }
-  @keyframes drift {
-    to {
-      translate: 26px 0;
-    }
-  }
-  @keyframes bob {
-    50% {
-      translate: 0 -7px;
-    }
-  }
-  @keyframes hop {
-    0%,
-    70%,
-    100% {
-      translate: 0 0;
-    }
-    80% {
-      translate: 0 -10px;
-    }
-    90% {
-      translate: 0 0;
-    }
-  }
-  @keyframes sway {
-    50% {
-      rotate: 0.8deg;
-    }
+  .s2 {
+    left: 79.4%;
+    top: 69.6%;
   }
 </style>

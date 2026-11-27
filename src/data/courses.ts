@@ -22,10 +22,8 @@ export interface Course {
   title: string;
   sub: string;
   tone: "ginkgo" | "rust" | "moss" | "amber";
-  /** 卡片上的小圖示 */
-  icon: "book" | "tool" | "bird" | "team";
   /** 帶這門課的森林住民 */
-  guide: { kind: "bear" | "rabbit" | "dog" | "team"; prop: "book" | "leaf" | "letter" | "laptop" | "none"; line: string };
+  guide: { img: "course-01" | "course-02" | "course-03" | "course-04"; alt: string; line: string };
   status: string;
   lede: string;
   forWho: string[];
@@ -45,8 +43,7 @@ export const courses: Course[] = [
     title: "AI 陪你做研究",
     sub: "從找文獻、讀文獻、寫論文到研究計畫書",
     tone: "ginkgo",
-    icon: "book",
-    guide: { kind: "bear", prop: "book", line: "熊帶路：讀文獻這件事，牠最在行。" },
+    guide: { img: "course-01", alt: "熊坐在書桌前，檯燈下讀書，旁邊堆滿書", line: "熊帶路：讀文獻這件事，牠最在行。" },
     status: "籌備中・大綱已公開",
     lede: "把 AI 放在研究流程裡對的位置：它幫你縮小問題、擴充檢索詞、整理筆記、檢查格式；判斷證據、下結論、負責任，還是你。",
     forWho: ["正在寫碩士論文或研究計畫的護理研究生", "要帶學生做實證報告的臨床教師", "想把讀文獻這件事變輕鬆的人"],
@@ -143,8 +140,7 @@ export const courses: Course[] = [
     title: "七天做出你的第一個護理小工具",
     sub: "Vibe Coding 實作：不會寫程式也能開始",
     tone: "rust",
-    icon: "tool",
-    guide: { kind: "dog", prop: "laptop", line: "狗帶路：想到就動手，七天做出一個東西。" },
+    guide: { img: "course-02", alt: "狗坐在草地上打筆電，旁邊放著工具箱", line: "狗帶路：想到就動手，七天做出一個東西。" },
     status: "籌備中・大綱已公開",
     lede: "每天一小步：找一個病房裡重複的小麻煩，用對話讓 AI 寫出一個網頁小工具，第七天放上網路，讓同事真的用得到。",
     forWho: ["沒寫過程式、但常想「要是有個小工具就好了」的護理人", "想做衛教或教學小工具的老師", "想試試 Claude Code 的人"],
@@ -218,8 +214,7 @@ export const courses: Course[] = [
     title: "讓好內容被看見",
     sub: "AI 時代的衛教與研究傳播：一份研究，做成五種形式",
     tone: "moss",
-    icon: "bird",
-    guide: { kind: "rabbit", prop: "leaf", line: "兔子帶路：耳朵最長，最知道別人聽不聽得懂。" },
+    guide: { img: "course-03", alt: "兔子站在樹樁上舉起一張圖卡，小鳥們圍著聽", line: "兔子帶路：耳朵最長，最知道別人聽不聽得懂。" },
     status: "籌備中・大綱已公開",
     lede: "研究做完、衛教寫好，卻沒有人看懂，等於沒有發生。這門課教你先想清楚給誰看、要他記住哪一句，再用 AI 把同一份內容做成適合不同人的樣子。",
     forWho: ["要做衛教單張、衛教影片的臨床護理師", "想讓研究成果被病人、同事看見的研究生", "經營單位或學會社群的人"],
@@ -286,8 +281,7 @@ export const courses: Course[] = [
     title: "打造你的 AI 研究團隊",
     sub: "用 Claude 搭出研究秘書、知識庫與內容產線",
     tone: "amber",
-    icon: "team",
-    guide: { kind: "team", prop: "none", line: "三個一起帶路：一個人做不完的事，交給一個團隊。" },
+    guide: { img: "course-04", alt: "熊、兔子、狗圍著一本大書一起討論", line: "三個一起帶路：一個人做不完的事，交給一個團隊。" },
     status: "籌備中・大綱已公開",
     lede: "不是多開幾個聊天視窗，而是把你反覆在做的事，交給有固定資料、固定做法、接得上你的筆記的 AI 夥伴；你留在需要判斷的位置。",
     forWho: ["已經每天用 AI，但每次都要重新解釋一遍的人", "同時在帶課、做研究、寫東西的老師與研究生", "想把自己的做法留下來給學弟妹的人"],

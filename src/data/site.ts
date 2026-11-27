@@ -9,8 +9,8 @@ export const site = {
   description:
     "Bob Yu 的學習網站：給護理人的 AI 課程、研究筆記課、文獻工具與 Claude Skills，全部放在同一片森林裡。",
   lang: "zh-Hant-TW",
-  // 首頁插畫上方那一行弧形英文
-  motto: "Slow paths, small lights, one leaf at a time.",
+  // 首頁插畫上方那一行弧形標語
+  motto: "慢慢走，有一點光，一次撿一片葉子。",
 };
 
 export const contact = {
@@ -26,9 +26,9 @@ export const contact = {
 
 /** 森林住民 */
 export const cast = [
-  { kind: "bear", prop: "book", name: "熊", role: "森林的主人", text: "最愛在銀杏樹下讀書。研究、文獻、寫作的事，問牠就對了。" },
-  { kind: "rabbit", prop: "leaf", name: "兔子", role: "引路員", text: "撐著一片銀杏葉站在路標旁，替第一次來的人指路。" },
-  { kind: "dog", prop: "letter", name: "狗", role: "送信員", text: "叼著信跑來跑去。想合作、想問問題，就交給牠送。" },
+  { img: "bear", alt: "穿綠色毛衣、盤腿讀書的熊", name: "熊", role: "森林的主人", text: "最愛在銀杏樹下讀書。研究、文獻、寫作的事，問牠就對了。" },
+  { img: "rabbit", alt: "穿芥末黃開襟衫、撐著一片銀杏葉的兔子", name: "兔子", role: "引路員", text: "撐著一片銀杏葉站在路標旁，替第一次來的人指路。" },
+  { img: "dog", alt: "圍紅圍巾、穿吊帶褲、拿著信的狗", name: "狗", role: "送信員", text: "叼著信跑來跑去。想合作、想問問題，就交給牠送。" },
 ] as const;
 
 export const about = {

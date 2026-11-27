@@ -1,0 +1,68 @@
+---
+/**
+ * 全站共用的「手繪」濾鏡，放在 body 最前面一次，所有 SVG 都用 url(#paint) 引用。
+ * - paint：邊緣微微抖動（像手畫的線）＋顏料顆粒
+ * - paint-soft：只有顆粒，給小圖示用，避免線條抖得太厲害
+ */
+---
+
+<svg class="paint-defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="paint" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="4" result="warp"></feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="warp" scale="3.4" xChannelSelector="R" yChannelSelector="G" result="wob"></feDisplacementMap>
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="11" result="noise"></feTurbulence>
+      <feColorMatrix
+        in="noise"
+        type="matrix"
+        values="0 0 0 0 0.24
+                0 0 0 0 0.16
+                0 0 0 0 0.08
+                0.9 0 0 0 -0.47"
+        result="speck"></feColorMatrix>
+      <feComposite in="speck" in2="wob" operator="in" result="speckIn"></feComposite>
+      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="21" result="wash"></feTurbulence>
+      <feColorMatrix
+        in="wash"
+        type="matrix"
+        values="0 0 0 0 1
+                0 0 0 0 0.95
+                0 0 0 0 0.82
+                0.7 0 0 0 -0.3"
+        result="light"></feColorMatrix>
+      <feComposite in="light" in2="wob" operator="in" result="lightIn"></feComposite>
+      <feMerge>
+        <feMergeNode in="wob"></feMergeNode>
+        <feMergeNode in="lightIn"></feMergeNode>
+        <feMergeNode in="speckIn"></feMergeNode>
+      </feMerge>
+    </filter>
+    <filter id="paint-soft" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="2" seed="7" result="warp"></feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="warp" scale="1.6" xChannelSelector="R" yChannelSelector="G" result="wob"></feDisplacementMap>
+      <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="13" result="noise"></feTurbulence>
+      <feColorMatrix
+        in="noise"
+        type="matrix"
+        values="0 0 0 0 0.24
+                0 0 0 0 0.16
+                0 0 0 0 0.08
+                0.8 0 0 0 -0.44"
+        result="speck"></feColorMatrix>
+      <feComposite in="speck" in2="wob" operator="in" result="speckIn"></feComposite>
+      <feMerge>
+        <feMergeNode in="wob"></feMergeNode>
+        <feMergeNode in="speckIn"></feMergeNode>
+      </feMerge>
+    </filter>
+  </defs>
+</svg>
+
+<style>
+  .paint-defs {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+</style>
