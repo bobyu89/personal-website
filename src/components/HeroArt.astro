@@ -1,6 +1,7 @@
 ---
 /**
- * 首頁插畫：一棵銀杏樹、一隻在樹下讀書的貓頭鷹、路標、兩隻綠色小鳥。全部是原創的 SVG。
+ * 首頁插畫：一棵銀杏樹、樹下讀書的熊、撐著銀杏葉的兔子、叼著信的狗、路標、兩隻綠色小鳥。全部是原創的 SVG。
+ * 畫法：低彩度大地色、細咖啡色線，外層套 #paint 手繪濾鏡（邊緣抖動＋顏料顆粒，在 PaintDefs.astro）。
  * 樹冠的葉子在建置時用固定種子的亂數排好，所以每次建置的樣子都一樣。
  */
 import { site } from "../data/site";
@@ -11,33 +12,39 @@ const rand = () => {
   seed = (seed * 1103515245 + 12345) % 2147483648;
   return seed / 2147483648;
 };
-const palette = ["#f0c348", "#e8b53d", "#dca333", "#f3cf63", "#d8932c", "#eab84a"];
-const canopy = Array.from({ length: 190 }, () => {
+const palette = ["#e1b04a", "#d6a03e", "#c98f35", "#e7c062", "#be8530", "#dcab45", "#c9a04a"];
+const canopy = Array.from({ length: 480 }, () => {
   const a = rand() * Math.PI * 2;
   const r = Math.sqrt(rand());
-  const x = 300 + Math.cos(a) * r * 185;
-  const y = 232 + Math.sin(a) * r * 112 - (1 - r) * 8;
+  const x = 300 + Math.cos(a) * r * 182;
+  const y = 236 + Math.sin(a) * r * 108 - (1 - r) * 10;
   return {
     x: x.toFixed(1),
     y: y.toFixed(1),
-    s: (0.2 + rand() * 0.13).toFixed(3),
+    s: (0.46 + rand() * 0.3).toFixed(3),
     rot: Math.round(rand() * 360),
     c: palette[Math.floor(rand() * palette.length)],
   };
 }).sort((p, q) => +p.y - +q.y);
+const ink = "#3b2a1e";
 ---
 
-<svg class="hero-art" viewBox="0 0 600 560" role="img" aria-label="一棵金黃的銀杏樹，樹下有一隻圍著黃圍巾、正在讀書的熊；路標旁的兔子撐著一片銀杏葉當傘，一隻小狗叼著信跑過來，天上有兩隻綠色小鳥">
+<svg
+  class="hero-art"
+  viewBox="0 0 600 560"
+  role="img"
+  aria-label="一棵金黃的銀杏樹，樹下有一隻穿綠毛衣、正在讀書的熊；路標旁穿芥末黃開襟衫的兔子撐著一片銀杏葉當傘，一隻穿吊帶褲的小狗叼著信跑過來，天上有兩隻綠色小鳥"
+>
   <defs>
-    <path id="gl" d="M0 -14 C-9 -14 -21 -21 -24 -34 C-16 -42 -6 -42 -2 -37 L0 -31 L2 -37 C6 -42 16 -42 24 -34 C21 -21 9 -14 0 -14 Z M-1 -14 L-1 0 L1 0 L1 -14 Z"></path>
+    <path id="gl" d="M0 -14 C-9 -14 -21 -21 -24 -34 C-16 -42 -6 -42 -2 -37 L0 -31 L2 -37 C6 -42 16 -42 24 -34 C21 -21 9 -14 0 -14 Z"></path>
     <linearGradient id="hill" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#c9a24c"></stop>
-      <stop offset=".55" stop-color="#b48a3c"></stop>
-      <stop offset="1" stop-color="#9c7533"></stop>
+      <stop offset="0" stop-color="#c7a650"></stop>
+      <stop offset=".5" stop-color="#b3923f"></stop>
+      <stop offset="1" stop-color="#977a35"></stop>
     </linearGradient>
     <radialGradient id="glow" cx=".5" cy=".45" r=".6">
-      <stop offset="0" stop-color="#fff3c4" stop-opacity=".9"></stop>
-      <stop offset="1" stop-color="#fff3c4" stop-opacity="0"></stop>
+      <stop offset="0" stop-color="#fbeec8" stop-opacity=".85"></stop>
+      <stop offset="1" stop-color="#fbeec8" stop-opacity="0"></stop>
     </radialGradient>
     <path id="arc" d="M 20 138 Q 300 -40 580 138"></path>
   </defs>
@@ -45,60 +52,76 @@ const canopy = Array.from({ length: 190 }, () => {
   <!-- 弧形標語 -->
   <text class="arc-text" font-size="22"><textPath href="#arc" startOffset="50%" text-anchor="middle">{site.motto}</textPath></text>
 
-  <!-- 雲 -->
-  <g fill="#fbf5e6" opacity=".95">
-    <path class="cloud c1" d="M40 210 c0 -14 14 -22 26 -16 c6 -14 30 -14 36 2 c14 -2 22 8 18 18 h-74 c-6 0 -6 -4 -6 -4 Z"></path>
-    <path class="cloud c2" d="M470 170 c0 -12 12 -20 24 -14 c6 -12 28 -12 33 2 c13 -2 20 7 16 16 h-68 c-5 0 -5 -4 -5 -4 Z"></path>
-    <path class="cloud c3" d="M500 330 c0 -10 10 -16 19 -11 c5 -10 22 -10 26 2 c10 -1 15 6 12 12 h-52 c-4 0 -5 -3 -5 -3 Z"></path>
+  <ellipse cx="300" cy="260" rx="250" ry="170" fill="url(#glow)"></ellipse>
+
+  <!-- 雲：扁扁的、像用粉彩抹上去 -->
+  <g fill="#f8efdc" stroke="#e3d3b3" stroke-width="1" filter="url(#paint)">
+    <path class="cloud c1" d="M28 214 c4 -12 18 -16 28 -12 c8 -12 30 -12 38 0 c12 -2 22 4 22 12 c-2 6 -10 8 -18 8 h-62 c-8 0 -10 -4 -8 -8 Z"></path>
+    <path class="cloud c2" d="M462 176 c4 -10 16 -14 26 -10 c8 -11 28 -11 34 0 c11 -1 20 4 20 11 c-2 5 -9 7 -16 7 h-56 c-7 0 -9 -4 -8 -8 Z"></path>
+    <path class="cloud c3" d="M496 334 c3 -8 12 -11 20 -8 c6 -8 21 -8 26 0 c9 -1 15 3 15 9 c-1 4 -7 5 -12 5 h-42 c-6 0 -8 -3 -7 -6 Z"></path>
   </g>
 
   <!-- 綠色小鳥 -->
-  <g class="bird b1" transform="translate(120 150) rotate(-12)">
-    <path d="M0 0 C8 -12 26 -12 32 -2 C24 6 8 8 0 0 Z" fill="#3f6b4d"></path>
-    <path d="M14 -6 C18 -20 30 -24 34 -20 C30 -12 22 -6 14 -6 Z" fill="#2d5240"></path>
-    <path d="M32 -2 L40 -4 L33 2 Z" fill="#d8932c"></path>
-    <circle cx="27" cy="-5" r="1.6" fill="#2a1c12"></circle>
+  <g class="bird b1" transform="translate(116 152) rotate(-12)" filter="url(#paint)" stroke={ink} stroke-width="1.2" stroke-linejoin="round">
+    <path d="M0 0 C8 -12 26 -12 32 -2 C24 6 8 8 0 0 Z" fill="#3d6556"></path>
+    <path d="M14 -6 C18 -20 30 -24 34 -20 C30 -12 22 -6 14 -6 Z" fill="#2c4d42"></path>
+    <path d="M32 -2 L39 -4 L33 2 Z" fill="#c9963a"></path>
+    <circle cx="27" cy="-5" r="1.5" fill={ink} stroke="none"></circle>
   </g>
-  <g class="bird b2" transform="translate(560 232) rotate(10) scale(-0.8 0.8)">
-    <path d="M0 0 C8 -12 26 -12 32 -2 C24 6 8 8 0 0 Z" fill="#3f6b4d"></path>
-    <path d="M14 -6 C18 -20 30 -24 34 -20 C30 -12 22 -6 14 -6 Z" fill="#2d5240"></path>
-    <path d="M32 -2 L40 -4 L33 2 Z" fill="#d8932c"></path>
-    <circle cx="27" cy="-5" r="1.6" fill="#2a1c12"></circle>
-  </g>
-
-  <!-- 山丘 -->
-  <ellipse cx="300" cy="250" rx="250" ry="170" fill="url(#glow)"></ellipse>
-  <path d="M14 500 C70 418 190 384 300 384 C420 384 540 420 588 500 C600 524 560 548 470 554 C360 562 240 562 130 554 C40 548 0 526 14 500 Z" fill="url(#hill)"></path>
-  <path d="M20 512 C120 492 220 500 300 510 C390 520 500 500 584 512 C578 534 540 548 470 554 C360 562 240 562 130 554 C60 548 24 532 20 512 Z" fill="#a37b37" opacity=".45"></path>
-
-  <!-- 樹幹與枝 -->
-  <g fill="none" stroke="#6e4a2c" stroke-linecap="round">
-    <path d="M300 396 C298 356 302 320 300 268" stroke-width="22"></path>
-    <path d="M300 320 C276 300 256 292 232 288" stroke-width="9"></path>
-    <path d="M302 300 C326 282 352 276 376 278" stroke-width="9"></path>
-    <path d="M300 280 C292 258 296 240 288 222" stroke-width="7"></path>
+  <g class="bird b2" transform="translate(560 232) rotate(10) scale(-0.8 0.8)" filter="url(#paint)" stroke={ink} stroke-width="1.2" stroke-linejoin="round">
+    <path d="M0 0 C8 -12 26 -12 32 -2 C24 6 8 8 0 0 Z" fill="#3d6556"></path>
+    <path d="M14 -6 C18 -20 30 -24 34 -20 C30 -12 22 -6 14 -6 Z" fill="#2c4d42"></path>
+    <path d="M32 -2 L39 -4 L33 2 Z" fill="#c9963a"></path>
+    <circle cx="27" cy="-5" r="1.5" fill={ink} stroke="none"></circle>
   </g>
 
-  <!-- 樹冠 -->
-  <ellipse cx="300" cy="236" rx="196" ry="118" fill="#d9a63a" opacity=".55"></ellipse>
-  <g class="canopy">
-    {canopy.map((p) => <use href="#gl" transform={`translate(${p.x} ${p.y}) rotate(${p.rot}) scale(${p.s * 4})`} fill={p.c} />)}
-  </g>
+  <!-- 山丘、樹、灌木、路標：整片一起上手繪濾鏡 -->
+  <g filter="url(#paint)" stroke-linejoin="round" stroke-linecap="round">
+    <path
+      d="M14 500 C70 418 190 384 300 384 C420 384 540 420 588 500 C600 524 560 548 470 554 C360 562 240 562 130 554 C40 548 0 526 14 500 Z"
+      fill="url(#hill)"
+      stroke="#8a6d2e"
+      stroke-width="1.4"></path>
+    <path d="M60 470 C120 440 170 436 210 446 C170 456 110 468 60 470 Z" fill="#9c9446" opacity=".55"></path>
+    <path d="M390 430 C450 428 520 446 560 480 C510 470 450 452 390 430 Z" fill="#9c9446" opacity=".5"></path>
+    <path d="M20 514 C120 494 220 502 300 512 C390 522 500 502 584 514 C578 534 540 548 470 554 C360 562 240 562 130 554 C60 548 24 532 20 514 Z" fill="#8e7232" opacity=".45"></path>
 
-  <!-- 灌木帶 -->
-  <path
-    d="M212 404 c6 -18 22 -20 30 -10 c6 -16 26 -18 32 -4 c8 -14 28 -14 34 0 c8 -14 30 -12 34 4 c10 -10 26 -6 28 10 Z"
-    fill="#3f6b4d"></path>
-  <path d="M226 404 c4 -10 14 -12 20 -4 M262 400 c4 -10 16 -10 20 0 M300 398 c4 -10 18 -10 22 0 M338 400 c4 -10 16 -8 20 2" stroke="#2d5240" stroke-width="2" fill="none"></path>
+    <!-- 樹幹與枝 -->
+    <g fill="none" stroke="#5b3e27">
+      <path d="M300 398 C296 360 303 326 298 270" stroke-width="20"></path>
+      <path d="M299 322 C276 302 256 294 230 290" stroke-width="7"></path>
+      <path d="M301 302 C326 284 352 278 378 280" stroke-width="7"></path>
+      <path d="M299 282 C291 260 296 242 286 222" stroke-width="5.5"></path>
+    </g>
+    <path d="M292 392 C290 360 294 330 291 290" stroke="#7a5638" stroke-width="2.4" fill="none"></path>
 
-  <!-- 路標 -->
-  <g transform="translate(118 404)">
-    <rect x="-4" y="-6" width="8" height="78" rx="3" fill="#7a5233"></rect>
-    <path d="M-48 2 H40 L54 14 L40 26 H-48 Z" fill="#e9d2a2" stroke="#7a5233" stroke-width="2.5"></path>
-    <text x="-2" y="20" class="sign" text-anchor="middle">課程 →</text>
-    <path d="M48 34 H-40 L-54 46 L-40 58 H48 Z" fill="#e9d2a2" stroke="#7a5233" stroke-width="2.5"></path>
-    <text x="0" y="52" class="sign" text-anchor="middle">← 工具</text>
+    <!-- 樹冠：先鋪一層底色，再一片一片疊葉子 -->
+    <path
+      d="M116 250 C104 196 150 140 214 132 C252 104 336 102 382 128 C444 136 494 186 486 244 C492 300 436 344 370 344 C330 362 262 362 226 344 C160 344 110 304 116 250 Z"
+      fill="#cf9c3c"
+      stroke="#a87b2a"
+      stroke-width="1.4"></path>
+    <g class="canopy" stroke="#a5772b" stroke-width="1.1">
+      {canopy.map((p) => <use href="#gl" transform={`translate(${p.x} ${p.y}) rotate(${p.rot}) scale(${p.s})`} fill={p.c} />)}
+    </g>
+
+    <!-- 灌木帶 -->
+    <path
+      d="M206 406 c4 -16 18 -20 27 -12 c5 -15 24 -18 31 -5 c8 -14 27 -14 33 0 c8 -13 29 -11 33 4 c9 -10 25 -6 28 9 c-2 6 -10 8 -18 8 h-120 c-10 0 -16 -2 -14 -4 Z"
+      fill="#2f5a4a"
+      stroke="#223f35"
+      stroke-width="1.4"></path>
+    <path d="M222 404 c4 -10 14 -12 20 -4 M258 400 c4 -10 16 -10 20 0 M296 398 c4 -10 18 -10 22 0 M334 400 c4 -10 16 -8 20 2" stroke="#4a7764" stroke-width="1.6" fill="none"></path>
+
+    <!-- 路標 -->
+    <g transform="translate(118 404)" stroke="#4e3420" stroke-width="1.6">
+      <rect x="-4" y="-6" width="8" height="78" rx="3" fill="#6f4c30"></rect>
+      <path d="M-48 2 H40 L54 14 L40 26 H-48 Z" fill="#e2cb9a"></path>
+      <path d="M48 34 H-40 L-54 46 L-40 58 H48 Z" fill="#e2cb9a"></path>
+    </g>
   </g>
+  <text x="116" y="424" class="sign" text-anchor="middle">課程 →</text>
+  <text x="118" y="456" class="sign" text-anchor="middle">← 工具</text>
 
   <!-- 森林住民：熊在樹下讀書、兔子撐著銀杏葉站在路標旁、狗叼著信跑來 -->
   <Critter kind="bear" prop="book" x={404} y={418} scale={1.05} />
@@ -106,11 +129,11 @@ const canopy = Array.from({ length: 190 }, () => {
   <Critter kind="dog" prop="letter" x={520} y={458} scale={0.8} flip />
 
   <!-- 地上的落葉 -->
-  <g>
-    <use href="#gl" transform="translate(210 470) rotate(-60) scale(.7)" fill="#e8b53d"></use>
-    <use href="#gl" transform="translate(500 500) rotate(40) scale(.8)" fill="#d8932c"></use>
-    <use href="#gl" transform="translate(60 520) rotate(110) scale(.75)" fill="#f0c348"></use>
-    <use href="#gl" transform="translate(330 530) rotate(200) scale(.65)" fill="#c4643a"></use>
+  <g filter="url(#paint)" stroke="#a5772b" stroke-width="1">
+    <use href="#gl" transform="translate(206 478) rotate(-60) scale(.8)" fill="#e1b04a"></use>
+    <use href="#gl" transform="translate(470 520) rotate(40) scale(.85)" fill="#c98f35"></use>
+    <use href="#gl" transform="translate(60 522) rotate(110) scale(.8)" fill="#e7c062"></use>
+    <use href="#gl" transform="translate(330 534) rotate(200) scale(.7)" fill="#b4602f"></use>
   </g>
 </svg>
 
@@ -122,14 +145,13 @@ const canopy = Array.from({ length: 190 }, () => {
   }
   .arc-text {
     font-family: var(--display);
-    fill: var(--rust);
+    fill: #9a5a32;
     letter-spacing: 0.02em;
   }
   .sign {
     font-family: var(--sans);
     font-size: 15px;
-    font-weight: 700;
-    fill: #5a3a22;
+    fill: #4e3420;
   }
   @media (prefers-reduced-motion: no-preference) {
     .cloud {
@@ -150,19 +172,15 @@ const canopy = Array.from({ length: 190 }, () => {
     :global(.hop) {
       animation: hop 4s ease-in-out infinite;
     }
-    .canopy {
-      transform-origin: 300px 340px;
-      animation: sway 9s ease-in-out infinite;
-    }
   }
   @keyframes drift {
     to {
-      translate: 26px 0;
+      translate: 22px 0;
     }
   }
   @keyframes bob {
     50% {
-      translate: 0 -7px;
+      translate: 0 -6px;
     }
   }
   @keyframes hop {
@@ -176,11 +194,6 @@ const canopy = Array.from({ length: 190 }, () => {
     }
     90% {
       translate: 0 0;
-    }
-  }
-  @keyframes sway {
-    50% {
-      rotate: 0.8deg;
     }
   }
 </style>

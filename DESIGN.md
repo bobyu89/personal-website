@@ -14,6 +14,8 @@
 
 04 課由三位一起帶。畫法在 `src/components/Critter.astro`（輸出 `<g>`，放進任何 SVG），單獨使用時用 `Animal.astro`。會眨眼、狗會搖尾巴、兔子偶爾跳一下。
 
+畫法：低彩度大地色、細咖啡色線、穿毛衣與褲子的小動物、黑豆眼。所有插畫外層套 `src/components/PaintDefs.astro` 的手繪濾鏡：`#paint`（邊緣微抖＋顏料顆粒＋淡淡的水洗光）給大圖，`#paint-soft` 給小圖示。
+
 插畫全部是原創的 inline SVG（`src/components/HeroArt.astro`、`Critter.astro`、`Leaf.astro`、`Icon.astro`），沒有使用任何外部圖片。首頁銀杏樹的葉子在建置時用固定種子排好，每次建置長得一樣。
 
 ## 色彩

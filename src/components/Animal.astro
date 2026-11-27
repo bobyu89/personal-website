@@ -10,6 +10,7 @@ interface Props {
   class?: string;
 }
 const { kind, prop = "none", size = "6rem", label, class: cls = "" } = Astro.props;
+const soft = parseFloat(size) < 5.5;
 const box = kind === "team" ? "-120 -80 240 150" : prop === "leaf" ? "-80 -115 140 185" : "-50 -80 100 150";
 ---
 
@@ -24,12 +25,12 @@ const box = kind === "team" ? "-120 -80 240 150" : prop === "leaf" ? "-80 -115 1
   {
     kind === "team" ? (
       <>
-        <Critter kind="rabbit" x={-78} y={10} scale={0.78} />
-        <Critter kind="dog" x={78} y={10} scale={0.8} flip />
-        <Critter kind="bear" x={0} y={0} scale={0.95} />
+        <Critter kind="rabbit" x={-78} y={10} scale={0.78} soft={soft} />
+        <Critter kind="dog" x={78} y={10} scale={0.8} flip soft={soft} />
+        <Critter kind="bear" x={0} y={0} scale={0.95} soft={soft} />
       </>
     ) : (
-      <Critter kind={kind} prop={prop} />
+      <Critter kind={kind} prop={prop} soft={soft} />
     )
   }
 </svg>
